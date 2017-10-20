@@ -13,5 +13,12 @@
 	<name>YAESS - Customer Loyalty Program</name>
 	<description>Yet Another Event Sourcing Sample - Customer Loyalty Program</description>
 
+	<dependencies>
+		<dependency>
+			<groupId>pl.biltec</groupId>
+			<artifactId>yaes-clp</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+	</dependencies>
 
 </project>

@@ -1,37 +1,37 @@
 package pl.biltec.yaess.clp.domain.customer;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
-import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
-import pl.biltec.yaess.core.common.contract.Contract;
-import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
+import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
 import pl.biltec.yaess.clp.domain.customer.exception.UnsupportedEventException;
+import pl.biltec.yaess.core.common.contract.Contract;
+import pl.biltec.yaess.core.common.domain.AggregateRoot;
 
 
 /**
  * Jeśli nie chcemy trzymać oddzielnie stanu oraz metod biznesowych Customera to należy pamiętać aby tylko zdarzenia (metody apply) mutowały stan.
  * Nie mutujemy stanu z poziomu metod biznesowych bo wystąpi problem przy odtwarzaniu.
  */
-public class Customer {
+public class Customer extends AggregateRoot<CustomerId, CustomerEvent> {
 
 	//DOMAIN attributes
 	private boolean created;
 	private boolean deleted;
-	private CustomerId customerId;
+//	private CustomerId customerId;
 	private String name;
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
 	//wartość startowa musi być zgodna z imp EventStore
-	private int concurrencyVersion = 0;
+//	private int concurrencyVersion = 0;
 
 	//ES attributes
 	//nowe zmiany do zakomitowania
-	private List<CustomerEvent> uncommittedEvents = new ArrayList<>();
+//	private List<CustomerEvent> uncommittedEvents = new ArrayList<>();
 
 	public Customer(List<CustomerEvent> events) {
 
@@ -52,16 +52,12 @@ public class Customer {
 		apply(new CustomerCreatedEvent(new CustomerId(), name, LocalDateTime.now()));
 	}
 
-	public CustomerId getId() {
 
-		return customerId;
-	}
-
-	public List<CustomerEvent> getUncommittedEvents() {
-
-		// TODO: [pbilewic] 08.10.17 wyciekanie referencji
-		return uncommittedEvents;
-	}
+//	public List<CustomerEvent> getUncommittedEvents() {
+//
+//		// TODO: [pbilewic] 08.10.17 wyciekanie referencji
+//		return uncommittedEvents;
+//	}
 
 	void apply(CustomerEvent event) {
 		//modyfikuj Agregat w oparciu o zdarzenia biznesowe
@@ -75,19 +71,19 @@ public class Customer {
 		Contract.notNull(newName, "newName");
 		// TODO: [pbilewic] 08.10.17 czy tu potrzebuję sprawdzać czy jest utworzony?
 		if (!name.equals(newName)) {
-			apply(new CustomerRenamedEvent(customerId, newName, LocalDateTime.now()));
+			apply(new CustomerRenamedEvent(id, newName, LocalDateTime.now()));
 		}
 	}
 
 	public void delete() {
 
 		if (deleted) {
-			throw new CustomerNotExistsException(customerId);
+			throw new CustomerNotExistsException(id);
 		}
 		//czy powinienem wywołać rename() czy stworzyć event?!
 		LocalDateTime now = LocalDateTime.now();
 		rename(name + "_USUNIĘTY_" + now);
-		apply(new CustomerDeletedEvent(customerId, now));
+		apply(new CustomerDeletedEvent(id, now));
 	}
 
 	//ES Mutowanie stanu zdarzeniami
@@ -110,16 +106,11 @@ public class Customer {
 		concurrencyVersion++;
 	}
 
-	public int getConcurrencyVersion() {
-
-		return concurrencyVersion;
-	}
-
 	private void mutate(CustomerCreatedEvent event) {
 
 		this.created = true;
 		this.name = event.getName();
-		this.customerId = event.id();
+		this.id = event.id();
 		this.creationTimestamp = event.created();
 	}
 

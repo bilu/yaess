@@ -31,12 +31,12 @@ public class CustomerApplicationService {
 	public String execute(CreateCustomerCommand command) {
 
 		Customer customer = new Customer(command.getName());
-		if (customerEventStore.alreadyExists(customer.getId())) {
-			throw new CustomerAlreadyCreatedException(customer.getId());
+		if (customerEventStore.alreadyExists(customer.id())) {
+			throw new CustomerAlreadyCreatedException(customer.id());
 		}
 		// TODO: [pbilewic] 12.10.17 static 0 convert 
-		customerEventStore.appendEvents(customer.getId(), customer.getUncommittedEvents(), 0);
-		return customer.getId().toString();
+		customerEventStore.appendEvents(customer.id(), customer.getUncommittedEvents(), 0);
+		return customer.id().toString();
 	}
 
 	public void execute(RenameCustomerCommand command) {

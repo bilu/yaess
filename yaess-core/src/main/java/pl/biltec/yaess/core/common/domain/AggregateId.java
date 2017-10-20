@@ -1,11 +1,9 @@
-package pl.biltec.yaess.core.domain;
-
-import static pl.biltec.yaess.yaess.core.common.contract.Contract.notNull;
+package pl.biltec.yaess.core.common.domain;
 
 import java.util.Objects;
 import java.util.UUID;
 
-import pl.biltec.yaess.yaess.core.common.contract.Contract;
+import pl.biltec.yaess.core.common.contract.Contract;
 
 
 public abstract class AggregateId {

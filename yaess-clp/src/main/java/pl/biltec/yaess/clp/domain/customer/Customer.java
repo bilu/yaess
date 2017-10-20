@@ -7,7 +7,7 @@ import java.util.List;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
-import pl.biltec.yaess.yaess.core.common.contract.Contract;
+import pl.biltec.yaess.core.common.contract.Contract;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.UnsupportedEventException;

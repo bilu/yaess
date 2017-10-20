@@ -1,4 +1,4 @@
-package pl.biltec.yaess.core.domain;
+package pl.biltec.yaess.core.common.domain;
 
 public interface Event<ID extends AggregateId> {
 

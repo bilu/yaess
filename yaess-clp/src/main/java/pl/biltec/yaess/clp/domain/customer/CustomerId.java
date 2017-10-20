@@ -2,7 +2,7 @@ package pl.biltec.yaess.clp.domain.customer;
 
 import java.util.UUID;
 
-import pl.biltec.yaess.core.domain.AggregateId;
+import pl.biltec.yaess.core.common.domain.AggregateId;
 
 
 public class CustomerId extends AggregateId {

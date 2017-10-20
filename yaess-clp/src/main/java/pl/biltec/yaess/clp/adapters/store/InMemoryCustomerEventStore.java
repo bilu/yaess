@@ -19,7 +19,7 @@ import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriberExtended;
 import pl.biltec.yaess.clp.domain.customer.CustomerEventsStream;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
-import pl.biltec.yaess.yaess.core.common.contract.Contract;
+import pl.biltec.yaess.core.common.contract.Contract;
 import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
 import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriber;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;

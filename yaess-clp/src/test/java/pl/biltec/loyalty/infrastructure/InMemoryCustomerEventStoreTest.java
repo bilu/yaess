@@ -7,18 +7,22 @@ import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import pl.biltec.loyalyty.domain.customer.CustomerEventStore;
-import pl.biltec.loyalyty.domain.customer.CustomerEventsStream;
-import pl.biltec.loyalyty.domain.customer.CustomerId;
-import pl.biltec.loyalyty.domain.customer.event.CustomerCreatedEvent;
-import pl.biltec.loyalyty.domain.customer.event.CustomerDeletedEvent;
-import pl.biltec.loyalyty.domain.customer.event.CustomerEvent;
-import pl.biltec.loyalyty.domain.customer.event.CustomerRenamedEvent;
-import pl.biltec.loyalyty.domain.customer.exception.ConcurrentModificationException;
-import pl.biltec.loyalyty.infrastructure.InMemoryCustomerEventStore;
-import pl.biltec.loyalyty.infrastructure.SystemOutCustomerDeletedEmailSender;
+import pl.biltec.yaess.clp.adapters.SystemOutAllEventsEventSubscriberExtended;
+import pl.biltec.yaess.clp.adapters.SystemOutCustomerDeletedEmailSender;
+import pl.biltec.yaess.clp.adapters.SystemOutCustomerRenamedEventSubscriber;
+import pl.biltec.yaess.clp.adapters.SystemOutCustomerRenamedEventSubscriber2;
+import pl.biltec.yaess.clp.adapters.store.InMemoryCustomerEventStore;
+import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
+import pl.biltec.yaess.clp.domain.customer.CustomerEventsStream;
+import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
+import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
 
 
 public class InMemoryCustomerEventStoreTest {
@@ -135,7 +139,8 @@ public class InMemoryCustomerEventStoreTest {
 	}
 
 	@Test
-	public void shouldInvokeSubscribedObjects() throws Exception {
+	@Ignore("Manual test due to async call verification")
+	public void shouldInvokeSubscribedObjectsAsync() throws Exception {
 		//given
 		CustomerId customerId = new CustomerId(UUID.randomUUID());
 		CustomerEventStore store = new InMemoryCustomerEventStore();
@@ -146,18 +151,16 @@ public class InMemoryCustomerEventStoreTest {
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		//when
-//		store.addEventSubscriber(new SystemOutCustomerRenamedEventSubscriber());
-//		store.addEventSubscriber(new SystemOutCustomerRenamedEventSubscriber2());
-//		store.addEventSubscriber(new SystemOutAllEventsEventSubscriberExtended());
+		store.addEventSubscriber(new SystemOutCustomerRenamedEventSubscriber());
+		store.addEventSubscriber(new SystemOutCustomerRenamedEventSubscriber2());
+		store.addEventSubscriber(new SystemOutAllEventsEventSubscriberExtended());
 		store.addEventSubscriber(new SystemOutCustomerDeletedEmailSender());
 
-
-
+		//when
 		store.appendEvents(customerId, events, 0);
 
 		//then
-		System.out.println("Koniec testu.");
+		System.out.println("Finished");
 		Thread.sleep(1000);
 
 	}

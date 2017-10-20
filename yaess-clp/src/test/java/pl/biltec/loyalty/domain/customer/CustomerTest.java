@@ -7,11 +7,11 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import pl.biltec.loyalyty.domain.customer.Customer;
-import pl.biltec.loyalyty.domain.customer.CustomerId;
-import pl.biltec.loyalyty.domain.customer.event.CustomerCreatedEvent;
-import pl.biltec.loyalyty.domain.customer.event.CustomerEvent;
-import pl.biltec.loyalyty.domain.customer.event.CustomerRenamedEvent;
+import pl.biltec.yaess.clp.domain.customer.Customer;
+import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 
 
 public class CustomerTest {

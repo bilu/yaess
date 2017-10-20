@@ -1,6 +1,7 @@
 package pl.biltec.loyalty.application.customer;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
@@ -8,13 +9,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import pl.biltec.loyalyty.application.customer.CustomerApplicationService;
-import pl.biltec.loyalyty.application.customer.command.CreateCustomerCommand;
-import pl.biltec.loyalyty.application.customer.command.CustomerCommand;
-import pl.biltec.loyalyty.application.customer.command.exception.UnsupportedCommandException;
-import pl.biltec.loyalyty.domain.customer.CustomerEventStore;
-import pl.biltec.loyalyty.domain.customer.CustomerEventsStream;
-import pl.biltec.loyalyty.domain.customer.CustomerId;
+import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
+import pl.biltec.yaess.clp.domain.customer.CustomerEventsStream;
+import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.clp.ports.customer.CustomerApplicationService;
+import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
+import pl.biltec.yaess.clp.ports.customer.command.CustomerCommand;
+import pl.biltec.yaess.clp.ports.customer.command.exception.UnsupportedCommandException;
 
 
 public class CustomerApplicationServiceTest {

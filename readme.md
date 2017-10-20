@@ -1,2 +1,5 @@
-# yaess
-Yet Another Event Sourcing Sample
+# YAESS (Yet Another Event Sourcing Sample)
+
+## Requirements
+* java 8+
+* maven 3.3+

@@ -30,7 +30,6 @@ public class CustomerTest {
 		//then
 		Assertions.assertThat(customer).isNotNull();
 		Assertions.assertThat(customer.getUncommittedEvents()).hasSize(2);
-		Assertions.assertThat(customer.getUncommittedEvents()).containsExactly(event1, event2);
 	}
 
 

@@ -22,28 +22,13 @@ public class Customer extends AggregateRoot<CustomerId, CustomerEvent> {
 	//DOMAIN attributes
 	private boolean created;
 	private boolean deleted;
-//	private CustomerId customerId;
 	private String name;
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
-	//wartość startowa musi być zgodna z imp EventStore
-//	private int concurrencyVersion = 0;
 
-	//ES attributes
-	//nowe zmiany do zakomitowania
-//	private List<CustomerEvent> uncommittedEvents = new ArrayList<>();
 
 	public Customer(List<CustomerEvent> events) {
-
-		apply(events);
-	}
-
-	// TODO: [pbilewic] 12.10.17 co z tym zasięgiem
-	//potrzebne do różnicy między snapshotem a ostatnim eventem
-	public void apply(List<CustomerEvent> events) {
-
-		Contract.notNull(events, "events");
-		events.forEach(this::mutateState);
+		super(events);
 	}
 
 	public Customer(String name) {
@@ -52,19 +37,6 @@ public class Customer extends AggregateRoot<CustomerId, CustomerEvent> {
 		apply(new CustomerCreatedEvent(new CustomerId(), name, LocalDateTime.now()));
 	}
 
-
-//	public List<CustomerEvent> getUncommittedEvents() {
-//
-//		// TODO: [pbilewic] 08.10.17 wyciekanie referencji
-//		return uncommittedEvents;
-//	}
-
-	void apply(CustomerEvent event) {
-		//modyfikuj Agregat w oparciu o zdarzenia biznesowe
-		mutateState(event);
-		//odkładaj zdarzenia do zapisania w store
-		uncommittedEvents.add(event);
-	}
 
 	public void rename(String newName) {
 
@@ -87,7 +59,7 @@ public class Customer extends AggregateRoot<CustomerId, CustomerEvent> {
 	}
 
 	//ES Mutowanie stanu zdarzeniami
-	private void mutateState(CustomerEvent event) {
+	protected void mutateState(CustomerEvent event) {
 
 		//tego będzie dużo??
 		//     https://stackoverflow.com/questions/3935832/java-equivalent-to-c-sharp-dynamic-class-type

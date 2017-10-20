@@ -1,4 +1,4 @@
-package pl.biltec.loyalty.infrastructure;
+package pl.biltec.yaess.loyalty.infrastructure;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

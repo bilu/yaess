@@ -7,7 +7,6 @@ import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriber;
 import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriberExtended;
 
 
-
 public interface CustomerEventStore {
 
 	CustomerEventsStream loadEvents(CustomerId customerId);

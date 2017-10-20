@@ -16,14 +16,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>pl.biltec</groupId>
-			<artifactId>yaes-clp</artifactId>
+			<artifactId>yaess-core</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.5</version>
 		</dependency>
 	</dependencies>
 

@@ -1,7 +1,6 @@
-package pl.biltec.loyalty.application.customer;
+package pl.biltec.yaess.loyalty.application.customer;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;

@@ -1,4 +1,4 @@
-package pl.biltec.yaess.core.common.contract.exception;
+package pl.biltec.yaess.yaess.core.common.contract.exception;
 
 
 public class CollectionIsNullOrEmptyException extends ContractBrokenException {

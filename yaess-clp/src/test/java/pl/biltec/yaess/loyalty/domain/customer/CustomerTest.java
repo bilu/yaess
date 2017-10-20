@@ -1,4 +1,4 @@
-package pl.biltec.loyalty.domain.customer;
+package pl.biltec.yaess.loyalty.domain.customer;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package pl.biltec.yaess.core.common.contract.exception;
+package pl.biltec.yaess.yaess.core.common.contract.exception;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

@@ -1,9 +1,11 @@
 package pl.biltec.yaess.core.domain;
 
-import static pl.biltec.yaess.core.common.contract.Contract.notNull;
+import static pl.biltec.yaess.yaess.core.common.contract.Contract.notNull;
 
 import java.util.Objects;
 import java.util.UUID;
+
+import pl.biltec.yaess.yaess.core.common.contract.Contract;
 
 
 public abstract class AggregateId {
@@ -17,12 +19,12 @@ public abstract class AggregateId {
 
 	public AggregateId(UUID id) {
 
-		this.id = notNull(id, "id");
+		this.id = Contract.notNull(id, "id");
 	}
 
 	public AggregateId(String id) {
 
-		this.id = UUID.fromString(notNull(id, "id"));
+		this.id = UUID.fromString(Contract.notNull(id, "id"));
 	}
 
 	@Override

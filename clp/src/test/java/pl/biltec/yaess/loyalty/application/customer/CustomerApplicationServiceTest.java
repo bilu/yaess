@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerEventStoreRepository;
-import pl.biltec.yaess.clp.domain.customer.EventStore;
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.ports.customer.CustomerApplicationService;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;

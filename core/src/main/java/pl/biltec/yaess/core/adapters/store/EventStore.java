@@ -1,9 +1,7 @@
-package pl.biltec.yaess.clp.domain.customer;
+package pl.biltec.yaess.core.adapters.store;
 
 import java.util.List;
 
-import pl.biltec.yaess.clp.ports.customer.EventSubscriber;
-import pl.biltec.yaess.clp.ports.customer.ExtendedEventSubscriber;
 import pl.biltec.yaess.core.domain.AbstractEvent;
 import pl.biltec.yaess.core.domain.AggregateId;
 

@@ -16,12 +16,6 @@ import pl.biltec.yaess.core.common.Contract;
 
 public class CustomerApplicationService {
 
-//	private EventStore customerEventStore;
-//
-//	public CustomerApplicationService(EventStore customerEventStore) {
-//
-//		this.customerEventStore = customerEventStore;
-//	}
 	private CustomerRepository customerRepository;
 
 	public CustomerApplicationService(CustomerRepository customerRepository) {
@@ -38,12 +32,9 @@ public class CustomerApplicationService {
 	public String execute(CreateCustomerCommand command) {
 
 		Customer customer = new Customer(command.getName());
-//		if (customerEventStore.exists(customer.id())) {
 		if (customerRepository.exists(customer.id())) {
 			throw new CustomerAlreadyCreatedException(customer.id());
 		}
-		// TODO: [pbilewic] 12.10.17 static 0 convert 
-//		customerEventStore.appendEvents(customer.id(), customer.getUncommittedEvents(), 0);
 		customerRepository.save(customer);
 		return customer.id().toString();
 	}
@@ -60,12 +51,8 @@ public class CustomerApplicationService {
 
 	void update(CustomerId customerId, Consumer<Customer> action) {
 
-//		CustomerEventsStream customerEventsStream = customerEventStore.loadEvents(customerId);
-//		Customer customer = new Customer(customerEventsStream.getEvents());
 		Customer customer = customerRepository.get(customerId);
 		action.accept(customer);
-//		customerEventStore.appendEvents(customerId, customer.getUncommittedEvents(), customerEventsStream.getConcurrencyVersion());
-		// TODO: [pbilewic] 21.10.17 gubimy wiedzę o customerEventsStream.getConcurrencyVersion()
 		customerRepository.save(customer);
 	}
 

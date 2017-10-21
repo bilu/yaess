@@ -1,22 +1,9 @@
 package pl.biltec.yaess.clp.domain.customer;
 
-import java.util.ConcurrentModificationException;
+import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
+import pl.biltec.yaess.core.domain.Repository;
 
 
-public interface CustomerRepository {
+public interface CustomerRepository extends Repository<CustomerId, CustomerEvent, Customer> {
 
-	Customer get(CustomerId id);
-
-	default Customer get(CustomerId id, long concurrencyVersion) {
-
-		Customer order = get(id);
-		if (order.concurrencyVersion() != concurrencyVersion) {
-			throw new ConcurrentModificationException(id.toString());
-		}
-		return order;
-	}
-
-	void save(Customer customer);
-
-	boolean exists(CustomerId id);
 }

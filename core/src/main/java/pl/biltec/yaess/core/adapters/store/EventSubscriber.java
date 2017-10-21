@@ -1,4 +1,4 @@
-package pl.biltec.yaess.clp.ports.customer;
+package pl.biltec.yaess.core.adapters.store;
 
 import pl.biltec.yaess.core.domain.AbstractEvent;
 import pl.biltec.yaess.core.domain.AggregateId;

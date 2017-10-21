@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public abstract class AggregateRoot<ID extends AggregateId, EVENT extends AbstractEvent<ID>> {
+public abstract class RootAggregate<ID extends AggregateId, EVENT extends AbstractEvent<ID>> {
 
 	protected ID id;
 	/**
@@ -19,11 +19,11 @@ public abstract class AggregateRoot<ID extends AggregateId, EVENT extends Abstra
 	private long concurrencyVersion = 0;
 	protected List<EVENT> uncommittedEvents = new ArrayList<>();
 
-	public AggregateRoot(List<EVENT> events) {
+	public RootAggregate(List<EVENT> events) {
 		apply(events);
 	}
 
-	protected AggregateRoot() {
+	protected RootAggregate() {
 	}
 
 	public ID id() {
@@ -80,10 +80,10 @@ public abstract class AggregateRoot<ID extends AggregateId, EVENT extends Abstra
 		if (this == o)
 			return true;
 
-		if (!(o instanceof AggregateRoot))
+		if (!(o instanceof RootAggregate))
 			return false;
 
-		AggregateRoot<?, ?> that = (AggregateRoot<?, ?>) o;
+		RootAggregate<?, ?> that = (RootAggregate<?, ?>) o;
 
 		return new EqualsBuilder()
 			.append(concurrencyVersion, that.concurrencyVersion)

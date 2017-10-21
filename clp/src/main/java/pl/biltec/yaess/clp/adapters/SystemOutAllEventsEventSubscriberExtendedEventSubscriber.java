@@ -2,7 +2,7 @@ package pl.biltec.yaess.clp.adapters;
 
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
-import pl.biltec.yaess.clp.ports.customer.ExtendedEventSubscriber;
+import pl.biltec.yaess.core.adapters.store.ExtendedEventSubscriber;
 
 
 public class SystemOutAllEventsEventSubscriberExtendedEventSubscriber implements ExtendedEventSubscriber<CustomerId, CustomerEvent> {

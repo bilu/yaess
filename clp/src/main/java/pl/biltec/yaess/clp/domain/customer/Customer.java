@@ -13,14 +13,14 @@ import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
 import pl.biltec.yaess.clp.domain.customer.exception.UnsupportedEventException;
 import pl.biltec.yaess.core.common.Contract;
-import pl.biltec.yaess.core.domain.AggregateRoot;
+import pl.biltec.yaess.core.domain.RootAggregate;
 
 
 /**
  * Jeśli nie chcemy trzymać oddzielnie stanu oraz metod biznesowych Customera to należy pamiętać aby tylko zdarzenia (metody apply) mutowały stan.
  * Nie mutujemy stanu z poziomu metod biznesowych bo wystąpi problem przy odtwarzaniu.
  */
-public class Customer extends AggregateRoot<CustomerId, CustomerEvent> {
+public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
 
 	//DOMAIN attributes
 	private boolean created;

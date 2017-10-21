@@ -15,12 +15,12 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import pl.biltec.yaess.clp.domain.customer.EventStore;
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
-import pl.biltec.yaess.clp.ports.customer.EventSubscriber;
-import pl.biltec.yaess.clp.ports.customer.ExtendedEventSubscriber;
+import pl.biltec.yaess.core.adapters.store.EventSubscriber;
+import pl.biltec.yaess.core.adapters.store.ExtendedEventSubscriber;
 import pl.biltec.yaess.core.common.Contract;
 
 

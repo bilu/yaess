@@ -16,7 +16,7 @@ import pl.biltec.yaess.clp.adapters.SystemOutDeletedEmailSender;
 import pl.biltec.yaess.clp.adapters.SystemOutRenamedEventSubscriber;
 import pl.biltec.yaess.clp.adapters.SystemOutRenamedEventSubscriber2;
 import pl.biltec.yaess.clp.adapters.store.InMemoryEventStore;
-import pl.biltec.yaess.clp.domain.customer.EventStore;
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;

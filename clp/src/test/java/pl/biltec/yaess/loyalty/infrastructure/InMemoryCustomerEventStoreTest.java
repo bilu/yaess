@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -16,7 +17,6 @@ import pl.biltec.yaess.clp.adapters.SystemOutCustomerRenamedEventSubscriber;
 import pl.biltec.yaess.clp.adapters.SystemOutCustomerRenamedEventSubscriber2;
 import pl.biltec.yaess.clp.adapters.store.InMemoryCustomerEventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
-import pl.biltec.yaess.clp.domain.customer.CustomerEventsStream;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
@@ -27,91 +27,92 @@ import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationExcep
 
 public class InMemoryCustomerEventStoreTest {
 
+	private CustomerId customerId;
+	private CustomerEventStore store;
+
+	@Before
+	public void setUp() throws Exception {
+
+		customerId = new CustomerId(UUID.randomUUID());
+		store = new InMemoryCustomerEventStore();
+
+	}
+
 	@Test
 	public void shouldFindNoEventsForNotExistingCustomer() throws Exception {
 		//given
 		CustomerEventStore store = new InMemoryCustomerEventStore();
 
 		//when
-		CustomerEventsStream customerEventsStream = store.loadEvents(new CustomerId(UUID.randomUUID()));
+		List<CustomerEvent> customerEvents = store.loadEvents(new CustomerId(UUID.randomUUID()));
 
 		//then
-		Assertions.assertThat(customerEventsStream).isNotNull();
-		Assertions.assertThat(customerEventsStream.getConcurrencyVersion()).isEqualTo(0);
-		Assertions.assertThat(customerEventsStream.getEvents()).isEmpty();
+		Assertions.assertThat(customerEvents).isNotNull();
+		Assertions.assertThat(customerEvents).isEmpty();
 	}
 
 	@Test
 	public void shouldFindOneEvent() throws Exception {
 		//given
-		CustomerId customerId = new CustomerId(UUID.randomUUID());
-		CustomerEventStore store = new InMemoryCustomerEventStore();
-		List<CustomerEvent> customerEvents = Arrays.asList(
+		List<CustomerEvent> inputCustomerEvents = Arrays.asList(
 			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId, customerEvents, 0);
+		store.appendEvents(customerId, inputCustomerEvents, 0);
 
 		//when
-		CustomerEventsStream customerEventsStream = store.loadEvents(customerId);
+		List<CustomerEvent> customerEvents = store.loadEvents(customerId);
 
 		//then
-		Assertions.assertThat(customerEventsStream).isNotNull();
-		Assertions.assertThat(customerEventsStream.getConcurrencyVersion()).isEqualTo(1);
-		Assertions.assertThat(customerEventsStream.getEvents()).hasSize(1);
+		Assertions.assertThat(customerEvents).isNotNull();
+		Assertions.assertThat(customerEvents).hasSize(1);
 	}
 
 	@Test
 	public void shouldFindManyEvents() throws Exception {
 		//given
-		CustomerId customerId = new CustomerId(UUID.randomUUID());
-		CustomerEventStore store = new InMemoryCustomerEventStore();
-		List<CustomerEvent> customerEvents = Arrays.asList(
+		List<CustomerEvent> inputCustomerEvents = Arrays.asList(
 			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now()),
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId, customerEvents, 0);
+		store.appendEvents(customerId, inputCustomerEvents, 0);
 
 		//when
-		CustomerEventsStream customerEventsStream = store.loadEvents(customerId);
+		List<CustomerEvent> customerEvents = store.loadEvents(customerId);
 
 		//then
-		Assertions.assertThat(customerEventsStream).isNotNull();
-		Assertions.assertThat(customerEventsStream.getConcurrencyVersion()).isEqualTo(4);
-		Assertions.assertThat(customerEventsStream.getEvents()).hasSize(4);
+		Assertions.assertThat(customerEvents).isNotNull();
+		Assertions.assertThat(customerEvents).hasSize(4);
 	}
 
 	@Test
 	public void shouldFindPartOfEventsEvents() throws Exception {
 		//given
-		CustomerId customerId = new CustomerId(UUID.randomUUID());
-		CustomerEventStore store = new InMemoryCustomerEventStore();
-		List<CustomerEvent> customerEvents = Arrays.asList(
+		CustomerRenamedEvent expectedToBeFound = new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now());
+		List<CustomerEvent> inputCustomerEvents = Arrays.asList(
 			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
-			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now()),
+			expectedToBeFound,
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId, customerEvents, 0);
+		store.appendEvents(customerId, inputCustomerEvents, 0);
 
 		//when
-		CustomerEventsStream customerEventsStream = store.loadEvents(customerId, 2, 1);
+		List<CustomerEvent> customerEvents = store.loadEvents(customerId, 2, 1);
 
 		//then
-		Assertions.assertThat(customerEventsStream).isNotNull();
-		Assertions.assertThat(customerEventsStream.getConcurrencyVersion()).isEqualTo(3);
-		Assertions.assertThat(customerEventsStream.getEvents()).hasSize(1);
+		Assertions.assertThat(customerEvents).isNotNull();
+		Assertions.assertThat(customerEvents).hasSize(1);
+		Assertions.assertThat(customerEvents).containsExactly(expectedToBeFound);
 	}
 
 	@Test
 	public void shouldNotAllowConcurrentModification() throws Exception {
 		//given
-		CustomerId customerId = new CustomerId(UUID.randomUUID());
-		CustomerEventStore store = new InMemoryCustomerEventStore();
 		List<CustomerEvent> initialCustomerEvents = Arrays.asList(
 			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
@@ -122,13 +123,13 @@ public class InMemoryCustomerEventStoreTest {
 		);
 
 		store.appendEvents(customerId, initialCustomerEvents, 0);
-		CustomerEventsStream customerEventsStream1 = store.loadEvents(customerId);
-		CustomerEventsStream customerEventsStream2 = store.loadEvents(customerId);
+		List<CustomerEvent> customerEvents1 = store.loadEvents(customerId);
+		List<CustomerEvent> customerEvents2 = store.loadEvents(customerId);
 
 		//when
-		store.appendEvents(customerId, anotherCustomerEvents, customerEventsStream1.getConcurrencyVersion());
+		store.appendEvents(customerId, anotherCustomerEvents, customerEvents1.size() + anotherCustomerEvents.size());
 		try {
-			store.appendEvents(customerId, anotherCustomerEvents, customerEventsStream2.getConcurrencyVersion());
+			store.appendEvents(customerId, anotherCustomerEvents, customerEvents2.size());
 			Fail.fail("Exception expected");
 		}
 		catch (Exception e) {
@@ -142,8 +143,6 @@ public class InMemoryCustomerEventStoreTest {
 	@Ignore("Manual test due to async call verification")
 	public void shouldInvokeSubscribedObjectsAsync() throws Exception {
 		//given
-		CustomerId customerId = new CustomerId(UUID.randomUUID());
-		CustomerEventStore store = new InMemoryCustomerEventStore();
 		List<CustomerEvent> events = Arrays.asList(
 			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),

@@ -15,14 +15,13 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriberExtended;
-import pl.biltec.yaess.clp.domain.customer.CustomerEventsStream;
+import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
-import pl.biltec.yaess.core.common.Contract;
-import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
-import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriber;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
+import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriber;
+import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriberExtended;
+import pl.biltec.yaess.core.common.Contract;
 
 
 public class InMemoryCustomerEventStore implements CustomerEventStore {
@@ -33,25 +32,21 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	@Override
-	public CustomerEventsStream loadEvents(CustomerId customerId) {
+	public List<CustomerEvent> loadEvents(CustomerId customerId) {
 
 		Contract.notNull(customerId, "id");
 
-		List<CustomerEvent> events = customerStream(customerId)
+		return customerStream(customerId)
 			.collect(Collectors.toList());
-
-		return new CustomerEventsStream(events.size(), events);
 	}
 
 	@Override
-	public CustomerEventsStream loadEvents(CustomerId customerId, int skipEvents, int maxCount) {
+	public List<CustomerEvent> loadEvents(CustomerId customerId, int skipEvents, int maxCount) {
 
-		List<CustomerEvent> events = customerStream(customerId)
+		return customerStream(customerId)
 			.skip(skipEvents)
 			.limit(maxCount)
 			.collect(Collectors.toList());
-
-		return new CustomerEventsStream(skipEvents + events.size(), events);
 	}
 
 	private Stream<CustomerEvent> customerStream(CustomerId customerId) {
@@ -61,12 +56,18 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 	}
 
 	@Override
-	public synchronized void appendEvents(CustomerId customerId, List<CustomerEvent> events, int expectedConcurrencyVersion) {
+	public synchronized void appendEvents(CustomerId customerId, List<CustomerEvent> events, long currentConcurrencyVersion) {
 
-		int calculatedConcurrencyVersion = (int) customerStream(customerId)
-			.count();
-		if (calculatedConcurrencyVersion != expectedConcurrencyVersion) {
-			throw new ConcurrentModificationException(customerId, expectedConcurrencyVersion, calculatedConcurrencyVersion);
+		Contract.notNull(customerId, "customerId");
+		Contract.notNull(events, "events");
+		Contract.notNull(currentConcurrencyVersion, "currentConcurrencyVersion");
+
+		if (exists(customerId)) {
+			long calculatedConcurrencyVersion = customerStream(customerId).count();
+
+			if (calculatedConcurrencyVersion != (currentConcurrencyVersion - events.size())) {
+				throw new ConcurrentModificationException(customerId, currentConcurrencyVersion, calculatedConcurrencyVersion);
+			}
 		}
 
 		List<CustomerEvent> toBePublished = new LinkedList<>();
@@ -82,13 +83,13 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 		//		IntWrapper actualConcurrencyVersion = new IntWrapper(lastConcurrencyVersion);
 		//		List<CustomerEvent> toBePublished = new LinkedList<>();
 
-		//		if (actualConcurrencyVersion.isDifferentThan(expectedConcurrencyVersion)) {
-		//			throw new ConcurrentModificationException(id, expectedConcurrencyVersion, actualConcurrencyVersion.value());
+		//		if (actualConcurrencyVersion.isDifferentThan(currentConcurrencyVersion)) {
+		//			throw new ConcurrentModificationException(id, currentConcurrencyVersion, actualConcurrencyVersion.value());
 		//		}
 		//		events.forEach(
 		//			newEvent -> {
 		//				if (actualConcurrencyVersion.increaseByOne().isDifferentThan(newEvent.getConcurrencyVersion())) {
-		//					throw new ConcurrentModificationException(id, expectedConcurrencyVersion, actualConcurrencyVersion.value());
+		//					throw new ConcurrentModificationException(id, currentConcurrencyVersion, actualConcurrencyVersion.value());
 		//				}
 		//				orderedEvent.add(newEvent);
 		//				toBePublished.add(newEvent);
@@ -154,7 +155,7 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 	}
 
 	@Override
-	public boolean alreadyExists(CustomerId customerId) {
+	public boolean exists(CustomerId customerId) {
 
 		return customerStream(customerId)
 			.findFirst()

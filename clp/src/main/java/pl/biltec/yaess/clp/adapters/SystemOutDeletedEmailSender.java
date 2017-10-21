@@ -1,10 +1,11 @@
 package pl.biltec.yaess.clp.adapters;
 
-import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriber;
+import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.clp.ports.customer.EventSubscriber;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
 
 
-public class SystemOutCustomerDeletedEmailSender implements CustomerEventSubscriber<CustomerDeletedEvent> {
+public class SystemOutDeletedEmailSender implements EventSubscriber<CustomerId, CustomerDeletedEvent> {
 
 	@Override
 	public void handleEvent(CustomerDeletedEvent customerRenamedEvent) {

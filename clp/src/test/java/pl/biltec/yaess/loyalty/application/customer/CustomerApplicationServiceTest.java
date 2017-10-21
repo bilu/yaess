@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerEventStoreRepository;
-import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
+import pl.biltec.yaess.clp.domain.customer.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.ports.customer.CustomerApplicationService;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
@@ -24,9 +24,9 @@ public class CustomerApplicationServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		//given
-		CustomerEventStore customerEventStore = Mockito.mock(CustomerEventStore.class);
-		Mockito.when(customerEventStore.loadEvents(Mockito.any(CustomerId.class))).thenReturn(Collections.emptyList());
-		customerApplicationService = new CustomerApplicationService(new CustomerEventStoreRepository(customerEventStore));
+		EventStore eventStore = Mockito.mock(EventStore.class);
+		Mockito.when(eventStore.loadEvents(Mockito.any(CustomerId.class))).thenReturn(Collections.emptyList());
+		customerApplicationService = new CustomerApplicationService(new CustomerEventStoreRepository(eventStore));
 	}
 
 

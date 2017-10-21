@@ -11,12 +11,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import pl.biltec.yaess.clp.adapters.SystemOutAllEventsEventSubscriberExtended;
-import pl.biltec.yaess.clp.adapters.SystemOutCustomerDeletedEmailSender;
-import pl.biltec.yaess.clp.adapters.SystemOutCustomerRenamedEventSubscriber;
-import pl.biltec.yaess.clp.adapters.SystemOutCustomerRenamedEventSubscriber2;
-import pl.biltec.yaess.clp.adapters.store.InMemoryCustomerEventStore;
-import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
+import pl.biltec.yaess.clp.adapters.SystemOutAllEventsEventSubscriberExtendedEventSubscriber;
+import pl.biltec.yaess.clp.adapters.SystemOutDeletedEmailSender;
+import pl.biltec.yaess.clp.adapters.SystemOutRenamedEventSubscriber;
+import pl.biltec.yaess.clp.adapters.SystemOutRenamedEventSubscriber2;
+import pl.biltec.yaess.clp.adapters.store.InMemoryEventStore;
+import pl.biltec.yaess.clp.domain.customer.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
@@ -25,23 +25,23 @@ import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
 
 
-public class InMemoryCustomerEventStoreTest {
+public class InMemoryEventStoreTest {
 
 	private CustomerId customerId;
-	private CustomerEventStore store;
+	private EventStore store;
 
 	@Before
 	public void setUp() throws Exception {
 
 		customerId = new CustomerId(UUID.randomUUID());
-		store = new InMemoryCustomerEventStore();
+		store = new InMemoryEventStore();
 
 	}
 
 	@Test
 	public void shouldFindNoEventsForNotExistingCustomer() throws Exception {
 		//given
-		CustomerEventStore store = new InMemoryCustomerEventStore();
+		EventStore store = new InMemoryEventStore();
 
 		//when
 		List<CustomerEvent> customerEvents = store.loadEvents(new CustomerId(UUID.randomUUID()));
@@ -150,10 +150,10 @@ public class InMemoryCustomerEventStoreTest {
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.addEventSubscriber(new SystemOutCustomerRenamedEventSubscriber());
-		store.addEventSubscriber(new SystemOutCustomerRenamedEventSubscriber2());
-		store.addEventSubscriber(new SystemOutAllEventsEventSubscriberExtended());
-		store.addEventSubscriber(new SystemOutCustomerDeletedEmailSender());
+		store.addEventSubscriber(new SystemOutRenamedEventSubscriber());
+		store.addEventSubscriber(new SystemOutRenamedEventSubscriber2());
+		store.addEventSubscriber(new SystemOutAllEventsEventSubscriberExtendedEventSubscriber());
+		store.addEventSubscriber(new SystemOutDeletedEmailSender());
 
 		//when
 		store.appendEvents(customerId, events, 0);

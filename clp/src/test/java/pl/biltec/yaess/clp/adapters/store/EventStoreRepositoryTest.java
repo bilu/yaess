@@ -10,14 +10,14 @@ import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
 
 
-public class CustomerEventStoreRepositoryTest {
+public class EventStoreRepositoryTest {
 
 	private CustomerRepository customerRepository;
 
 	@Before
 	public void setUp() throws Exception {
 
-		customerRepository = new CustomerEventStoreRepository(new InMemoryCustomerEventStore());
+		customerRepository = new CustomerEventStoreRepository(new InMemoryEventStore());
 
 	}
 

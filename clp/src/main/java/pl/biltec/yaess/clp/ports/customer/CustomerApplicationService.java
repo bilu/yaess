@@ -16,9 +16,9 @@ import pl.biltec.yaess.core.common.Contract;
 
 public class CustomerApplicationService {
 
-//	private CustomerEventStore customerEventStore;
+//	private EventStore customerEventStore;
 //
-//	public CustomerApplicationService(CustomerEventStore customerEventStore) {
+//	public CustomerApplicationService(EventStore customerEventStore) {
 //
 //		this.customerEventStore = customerEventStore;
 //	}

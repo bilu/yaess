@@ -1,35 +1,35 @@
 package pl.biltec.yaess.clp.adapters.store;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
+import pl.biltec.yaess.clp.domain.customer.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 
 
 public class CustomerEventStoreRepository implements CustomerRepository {
 
-	private CustomerEventStore customerEventStore;
+	private EventStore eventStore;
 
-	public CustomerEventStoreRepository(CustomerEventStore customerEventStore) {
+	public CustomerEventStoreRepository(EventStore eventStore) {
 
-		this.customerEventStore = customerEventStore;
+		this.eventStore = eventStore;
 	}
 
 	@Override
 	public Customer get(CustomerId id) {
-		return new Customer(customerEventStore.loadEvents(id));
+		return new Customer(eventStore.loadEvents(id));
 	}
 
 	@Override
 	public void save(Customer customer) {
 
-		customerEventStore.appendEvents(customer.id(), customer.getUncommittedEvents(), customer.concurrencyVersion());
+		eventStore.appendEvents(customer.id(), customer.getUncommittedEvents(), customer.concurrencyVersion());
 		customer.clearUncommittedEvents();
 	}
 
 	@Override
 	public boolean exists(CustomerId id) {
 
-		return customerEventStore.exists(id);
+		return eventStore.exists(id);
 	}
 }

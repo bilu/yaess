@@ -15,20 +15,20 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerEventStore;
+import pl.biltec.yaess.clp.domain.customer.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
-import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriber;
-import pl.biltec.yaess.clp.ports.customer.CustomerEventSubscriberExtended;
+import pl.biltec.yaess.clp.ports.customer.EventSubscriber;
+import pl.biltec.yaess.clp.ports.customer.ExtendedEventSubscriber;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public class InMemoryCustomerEventStore implements CustomerEventStore {
+public class InMemoryEventStore implements EventStore<CustomerId, CustomerEvent> {
 
 	private List<CustomerEvent> orderedEvent = Collections.synchronizedList(new LinkedList<>());
 	private Map<Class<? extends CustomerEvent>, List<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
-	private Set<CustomerEventSubscriberExtended> subscribersExtended = Collections.synchronizedSet(new HashSet<>());
+	private Set<ExtendedEventSubscriber> subscribersExtended = Collections.synchronizedSet(new HashSet<>());
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	@Override
@@ -112,7 +112,7 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 				event -> {
 					List<Object> customerEventSubscribers = subscribers.get(event.getClass());
 					if (customerEventSubscribers != null) {
-						customerEventSubscribers.forEach(subscriber -> ((CustomerEventSubscriber) subscriber).handleEvent(event));
+						customerEventSubscribers.forEach(subscriber -> ((EventSubscriber) subscriber).handleEvent(event));
 					}
 				}
 			);
@@ -125,16 +125,16 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 			.forEach(
 				event -> {
 					subscribersExtended.stream()
-						.filter(customerEventSubscriberExtended -> customerEventSubscriberExtended.supports(event))
+						.filter(extendedEventSubscriber -> extendedEventSubscriber.supports(event))
 						.forEach(subscriberExtended -> subscriberExtended.handleEvent(event));
 				}
 			);
 	}
 
 	@Override
-	public void addEventSubscriber(CustomerEventSubscriber<? extends CustomerEvent> eventSubscriber) {
+	public void addEventSubscriber(EventSubscriber<CustomerId, CustomerEvent> eventSubscriber) {
 
-		// TODO: [pbilewic] 11.10.17 debilne, refaktor
+			// TODO: [pbilewic] 11.10.17 debilne, refaktor
 		List<Object> customerEventSubscribers = subscribers.get(eventSubscriber.eventType());
 		if (customerEventSubscribers == null) {
 			customerEventSubscribers = Arrays.asList(eventSubscriber);
@@ -149,7 +149,7 @@ public class InMemoryCustomerEventStore implements CustomerEventStore {
 	}
 
 	@Override
-	public void addEventSubscriber(CustomerEventSubscriberExtended eventSubscriber) {
+	public void addEventSubscriber(ExtendedEventSubscriber eventSubscriber) {
 
 		subscribersExtended.add(eventSubscriber);
 	}

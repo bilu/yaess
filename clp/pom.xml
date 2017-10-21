@@ -4,14 +4,21 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>yaess</artifactId>
-		<groupId>pl.biltec</groupId>
+		<groupId>pl.biltec.yaess</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>yaess-core</artifactId>
-	<name>YAESS - Core</name>
-	<description>Yet Another Event Sourcing Sample - Core</description>
+	<artifactId>clp</artifactId>
+	<name>YAESS - Customer Loyalty Program</name>
+	<description>Yet Another Event Sourcing Sample - Customer Loyalty Program</description>
 
+	<dependencies>
+		<dependency>
+			<groupId>pl.biltec.yaess</groupId>
+			<artifactId>core</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+	</dependencies>
 
 </project>

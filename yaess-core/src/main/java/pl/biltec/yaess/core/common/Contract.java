@@ -1,4 +1,4 @@
-package pl.biltec.yaess.core.common.contract;
+package pl.biltec.yaess.core.common;
 
 import java.io.File;
 import java.util.Collection;
@@ -7,14 +7,14 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import pl.biltec.yaess.core.common.contract.exception.CollectionContainsNullValueException;
-import pl.biltec.yaess.core.common.contract.exception.CollectionIsNullOrEmptyException;
-import pl.biltec.yaess.core.common.contract.exception.ConditionNotMetException;
-import pl.biltec.yaess.core.common.contract.exception.ContractBrokenException;
-import pl.biltec.yaess.core.common.contract.exception.IncorrectValueException;
-import pl.biltec.yaess.core.common.contract.exception.PatternNotMatchedException;
-import pl.biltec.yaess.core.common.contract.exception.ReferenceIsNullException;
-import pl.biltec.yaess.core.common.contract.exception.TextIsNullOrEmptyException;
+import pl.biltec.yaess.core.common.exception.CollectionContainsNullValueException;
+import pl.biltec.yaess.core.common.exception.CollectionIsNullOrEmptyException;
+import pl.biltec.yaess.core.common.exception.ConditionNotMetException;
+import pl.biltec.yaess.core.common.exception.ContractBrokenException;
+import pl.biltec.yaess.core.common.exception.IncorrectValueException;
+import pl.biltec.yaess.core.common.exception.PatternNotMatchedException;
+import pl.biltec.yaess.core.common.exception.ReferenceIsNullException;
+import pl.biltec.yaess.core.common.exception.TextIsNullOrEmptyException;
 
 
 public final class Contract {

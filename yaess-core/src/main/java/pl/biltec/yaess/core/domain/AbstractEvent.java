@@ -1,4 +1,4 @@
-package pl.biltec.yaess.core.common.domain;
+package pl.biltec.yaess.core.domain;
 
 import java.time.LocalDateTime;
 

@@ -9,8 +9,8 @@ import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
 import pl.biltec.yaess.clp.domain.customer.exception.UnsupportedEventException;
-import pl.biltec.yaess.core.common.contract.Contract;
-import pl.biltec.yaess.core.common.domain.AggregateRoot;
+import pl.biltec.yaess.core.common.Contract;
+import pl.biltec.yaess.core.domain.AggregateRoot;
 
 
 /**

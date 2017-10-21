@@ -1,10 +1,10 @@
-package pl.biltec.yaess.core.common.domain;
+package pl.biltec.yaess.core.domain;
 
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-import pl.biltec.yaess.core.common.contract.Contract;
+import pl.biltec.yaess.core.common.Contract;
 
 
 public abstract class AggregateId implements Serializable {

@@ -1,10 +1,10 @@
-package pl.biltec.yaess.core.common.domain;
+package pl.biltec.yaess.core.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pl.biltec.yaess.core.common.contract.Contract;
+import pl.biltec.yaess.core.common.Contract;
 
 
 public abstract class AggregateRoot<ID extends AggregateId, EVENT extends AbstractEvent<ID>> {

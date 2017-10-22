@@ -1,16 +1,20 @@
 package pl.biltec.yaess.clp.adapters;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
-import pl.biltec.yaess.core.adapters.store.EventSubscriber;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
+import pl.biltec.yaess.core.adapters.store.EventSubscriber;
 
 
-public class SystemOutDeletedEmailSender implements EventSubscriber<CustomerId, CustomerDeletedEvent> {
+public class CustomerDeletedEmailSender implements EventSubscriber<CustomerId, CustomerDeletedEvent> {
 
+	private static final Logger logger = LoggerFactory.getLogger(CustomerDeletedEmailSender.class);
 	@Override
 	public void handleEvent(CustomerDeletedEvent customerRenamedEvent) {
 
-		System.out.println(this.getClass().getSimpleName() + ": " + customerRenamedEvent);
+		logger.info(this.getClass().getSimpleName() + ": " + customerRenamedEvent);
 	}
 
 	@Override

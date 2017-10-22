@@ -1,16 +1,21 @@
 package pl.biltec.yaess.clp.adapters;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
 
 
-public class SystemOutRenamedEventSubscriber implements EventSubscriber<CustomerId, CustomerRenamedEvent> {
+public class CustomerRenamedEventLogger2 implements EventSubscriber<CustomerId, CustomerRenamedEvent> {
+
+	private static final Logger logger = LoggerFactory.getLogger(CustomerRenamedEventLogger2.class);
 
 	@Override
 	public void handleEvent(CustomerRenamedEvent customerRenamedEvent) {
 
-		System.out.println(this.getClass().getSimpleName() + ": " + customerRenamedEvent);
+		logger.info(this.getClass().getSimpleName() + ": " + customerRenamedEvent);
 	}
 
 	@Override

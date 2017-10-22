@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import pl.biltec.yaess.clp.adapters.SystemOutAllEventsEventSubscriberExtendedEventSubscriber;
-import pl.biltec.yaess.clp.adapters.SystemOutDeletedEmailSender;
-import pl.biltec.yaess.clp.adapters.SystemOutRenamedEventSubscriber;
-import pl.biltec.yaess.clp.adapters.SystemOutRenamedEventSubscriber2;
+import pl.biltec.yaess.clp.adapters.AllCustomerEventsLogger;
+import pl.biltec.yaess.clp.adapters.CustomerDeletedEmailSender;
+import pl.biltec.yaess.clp.adapters.CustomerRenamedEventLogger;
+import pl.biltec.yaess.clp.adapters.CustomerRenamedEventLogger2;
 import pl.biltec.yaess.clp.adapters.store.InMemoryEventStore;
 import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
@@ -150,10 +150,10 @@ public class InMemoryEventStoreTest {
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.addEventSubscriber(new SystemOutRenamedEventSubscriber());
-		store.addEventSubscriber(new SystemOutRenamedEventSubscriber2());
-		store.addEventSubscriber(new SystemOutAllEventsEventSubscriberExtendedEventSubscriber());
-		store.addEventSubscriber(new SystemOutDeletedEmailSender());
+		store.addEventSubscriber(new CustomerRenamedEventLogger());
+		store.addEventSubscriber(new CustomerRenamedEventLogger2());
+		store.addEventSubscriber(new AllCustomerEventsLogger());
+		store.addEventSubscriber(new CustomerDeletedEmailSender());
 
 		//when
 		store.appendEvents(customerId, events, 0);

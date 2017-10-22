@@ -1,5 +1,5 @@
 
-package pl.biltec.yaess.clp.ports.customer.command.exception;
+package pl.biltec.yaess.clp.ports.customer.exception;
 
 import pl.biltec.yaess.clp.ports.customer.command.CustomerCommand;
 

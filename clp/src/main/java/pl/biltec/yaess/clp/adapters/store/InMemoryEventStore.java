@@ -15,8 +15,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.ConcurrentModificationException;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
@@ -34,7 +34,7 @@ public class InMemoryEventStore implements EventStore<CustomerId, CustomerEvent>
 	@Override
 	public List<CustomerEvent> loadEvents(CustomerId customerId) {
 
-		Contract.notNull(customerId, "id");
+		Contract.notNull(customerId, "rootAggregateId");
 
 		return customerStream(customerId)
 			.collect(Collectors.toList());
@@ -52,7 +52,7 @@ public class InMemoryEventStore implements EventStore<CustomerId, CustomerEvent>
 	private Stream<CustomerEvent> customerStream(CustomerId customerId) {
 
 		return orderedEvent.stream()
-			.filter(customerEvent -> customerEvent.id().equals(customerId));
+			.filter(customerEvent -> customerEvent.rootAggregateId().equals(customerId));
 	}
 
 	@Override
@@ -84,12 +84,12 @@ public class InMemoryEventStore implements EventStore<CustomerId, CustomerEvent>
 		//		List<CustomerEvent> toBePublished = new LinkedList<>();
 
 		//		if (actualConcurrencyVersion.isDifferentThan(currentConcurrencyVersion)) {
-		//			throw new ConcurrentModificationException(id, currentConcurrencyVersion, actualConcurrencyVersion.value());
+		//			throw new ConcurrentModificationException(rootAggregateId, currentConcurrencyVersion, actualConcurrencyVersion.value());
 		//		}
 		//		events.forEach(
 		//			newEvent -> {
 		//				if (actualConcurrencyVersion.increaseByOne().isDifferentThan(newEvent.getConcurrencyVersion())) {
-		//					throw new ConcurrentModificationException(id, currentConcurrencyVersion, actualConcurrencyVersion.value());
+		//					throw new ConcurrentModificationException(rootAggregateId, currentConcurrencyVersion, actualConcurrencyVersion.value());
 		//				}
 		//				orderedEvent.add(newEvent);
 		//				toBePublished.add(newEvent);

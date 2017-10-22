@@ -25,7 +25,7 @@ public class CustomerCreatedEvent extends CustomerEvent {
 
 		return "CustomerCreatedEvent{" +
 			"name='" + name + '\'' +
-			", id=" + id +
+			", rootAggregateId=" + rootAggregateId +
 			", version=" + version +
 			", created=" + created +
 			'}';

@@ -25,7 +25,7 @@ public class CustomerRenamedEvent extends CustomerEvent {
 
 		return "CustomerRenamedEvent{" +
 			"newName='" + newName + '\'' +
-			", id=" + id +
+			", rootAggregateId=" + rootAggregateId +
 			", version=" + version +
 			", created=" + created +
 			'}';

@@ -1,10 +1,10 @@
 package pl.biltec.yaess.core.adapters.store;
 
-import pl.biltec.yaess.core.domain.AbstractEvent;
-import pl.biltec.yaess.core.domain.AggregateId;
+import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface ExtendedEventSubscriber<ID extends AggregateId, EVENT extends AbstractEvent<ID>> {
+public interface ExtendedEventSubscriber<ID extends RootAggregateId, EVENT extends Event<ID>> {
 
 	void handleEvent(final EVENT event);
 

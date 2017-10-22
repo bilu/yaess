@@ -7,23 +7,23 @@ import java.util.UUID;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public abstract class AggregateId implements Serializable {
+public abstract class RootAggregateId implements Serializable {
 
 	private UUID id;
 
-	public AggregateId() {
+	public RootAggregateId() {
 
 		this.id = UUID.randomUUID();
 	}
 
-	public AggregateId(UUID id) {
+	public RootAggregateId(UUID id) {
 
-		this.id = Contract.notNull(id, "id");
+		this.id = Contract.notNull(id, "rootAggregateId");
 	}
 
-	public AggregateId(String id) {
+	public RootAggregateId(String id) {
 
-		this.id = UUID.fromString(Contract.notNull(id, "id"));
+		this.id = UUID.fromString(Contract.notNull(id, "rootAggregateId"));
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public abstract class AggregateId implements Serializable {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		AggregateId that = (AggregateId) o;
+		RootAggregateId that = (RootAggregateId) o;
 		return Objects.equals(id, that.id);
 	}
 

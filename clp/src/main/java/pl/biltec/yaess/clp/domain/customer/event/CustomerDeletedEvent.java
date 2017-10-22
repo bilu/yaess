@@ -17,7 +17,7 @@ public class CustomerDeletedEvent extends CustomerEvent {
 	public String toString() {
 
 		return "CustomerDeletedEvent{" +
-			"id=" + id +
+			"rootAggregateId=" + rootAggregateId +
 			", version=" + version +
 			", created=" + created +
 			'}';

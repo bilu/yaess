@@ -78,7 +78,6 @@ public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
 		else {
 			throw new UnsupportedEventException(event);
 		}
-//		concurrencyVersion++;
 		incrementConcurrencyVersion();
 	}
 
@@ -86,7 +85,7 @@ public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
 
 		this.created = true;
 		this.name = event.getName();
-		this.id = event.id();
+		this.id = event.rootAggregateId();
 		this.creationTimestamp = event.created();
 	}
 
@@ -139,7 +138,7 @@ public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
 			", name='" + name + '\'' +
 			", creationTimestamp=" + creationTimestamp +
 			", lastUpdateTimestamp=" + lastUpdateTimestamp +
-			", id=" + id +
+			", rootAggregateId=" + id +
 			", concurrencyVersion=" + concurrencyVersion() +
 			", uncommittedEvents=" + uncommittedEvents +
 			'}';

@@ -30,7 +30,7 @@ public class RenameCustomerCommand extends CustomerCommand {
 
 		return "CreateCustomerCommand{" +
 			"newName='" + newName + '\'' +
-			", id=" + id +
+			", rootAggregateId=" + id +
 			'}';
 	}
 }

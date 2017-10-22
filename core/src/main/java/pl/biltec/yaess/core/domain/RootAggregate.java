@@ -1,5 +1,6 @@
 package pl.biltec.yaess.core.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public abstract class RootAggregate<ID extends AggregateId, EVENT extends AbstractEvent<ID>> {
+public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Event<ID>> implements Serializable {
 
 	protected ID id;
 	/**
@@ -20,10 +21,12 @@ public abstract class RootAggregate<ID extends AggregateId, EVENT extends Abstra
 	protected List<EVENT> uncommittedEvents = new ArrayList<>();
 
 	public RootAggregate(List<EVENT> events) {
+
 		apply(events);
 	}
 
 	protected RootAggregate() {
+
 	}
 
 	public ID id() {
@@ -57,15 +60,22 @@ public abstract class RootAggregate<ID extends AggregateId, EVENT extends Abstra
 		uncommittedEvents.clear();
 	}
 
-
 	public void apply(List<EVENT> events) {
 
 		Contract.notNull(events, "events");
-		events.forEach(this::mutateState);
+		events.stream()
+			.peek(event -> {
+					if(id != null) {
+						boolean eventIdMatchRootAggreagteId = (id == event.rootAggregateId());
+						Contract.isTrue(eventIdMatchRootAggreagteId, String.format("Event rootAggregateId=%s not match RootAggregate rootAggregateId=%s", id, event.rootAggregateId()));
+					}
+				}
+			)
+			.forEach(this::mutateState);
 	}
 
-
 	protected void apply(EVENT event) {
+
 		//mutate Aggregate for incoming business events
 		mutateState(event);
 		//put aside not committed events

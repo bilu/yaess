@@ -17,7 +17,7 @@ public class EventStoreRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 
-		customerRepository = new CustomerEventStoreRepository(new InMemoryEventStore());
+		customerRepository = new CustomerEventStoreWrapperRepository(new InMemoryEventStore());
 
 	}
 

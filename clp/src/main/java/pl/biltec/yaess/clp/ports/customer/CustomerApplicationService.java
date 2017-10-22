@@ -10,7 +10,7 @@ import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CustomerCommand;
 import pl.biltec.yaess.clp.ports.customer.command.DeleteCustomerCommand;
 import pl.biltec.yaess.clp.ports.customer.command.RenameCustomerCommand;
-import pl.biltec.yaess.clp.ports.customer.command.exception.UnsupportedCommandException;
+import pl.biltec.yaess.clp.ports.customer.exception.UnsupportedCommandException;
 import pl.biltec.yaess.core.common.Contract;
 
 

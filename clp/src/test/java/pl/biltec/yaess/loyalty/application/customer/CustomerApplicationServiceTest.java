@@ -8,13 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import pl.biltec.yaess.clp.adapters.store.CustomerEventStoreRepository;
-import pl.biltec.yaess.core.adapters.store.EventStore;
+import pl.biltec.yaess.clp.adapters.store.CustomerEventStoreWrapperRepository;
 import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.clp.ports.customer.CustomerApplicationService;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CustomerCommand;
-import pl.biltec.yaess.clp.ports.customer.command.exception.UnsupportedCommandException;
+import pl.biltec.yaess.clp.ports.customer.exception.UnsupportedCommandException;
 
 
 public class CustomerApplicationServiceTest {
@@ -26,7 +26,7 @@ public class CustomerApplicationServiceTest {
 		//given
 		EventStore eventStore = Mockito.mock(EventStore.class);
 		Mockito.when(eventStore.loadEvents(Mockito.any(CustomerId.class))).thenReturn(Collections.emptyList());
-		customerApplicationService = new CustomerApplicationService(new CustomerEventStoreRepository(eventStore));
+		customerApplicationService = new CustomerApplicationService(new CustomerEventStoreWrapperRepository(eventStore));
 	}
 
 

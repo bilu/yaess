@@ -22,7 +22,7 @@ public class DeleteCustomerCommand extends CustomerCommand {
 	public String toString() {
 
 		return "DeleteCustomerCommand{" +
-			"id=" + id +
+			"rootAggregateId=" + id +
 			'}';
 	}
 }

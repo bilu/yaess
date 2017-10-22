@@ -2,11 +2,11 @@ package pl.biltec.yaess.core.adapters.store;
 
 import java.util.List;
 
-import pl.biltec.yaess.core.domain.AbstractEvent;
-import pl.biltec.yaess.core.domain.AggregateId;
+import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface EventStore<ID extends AggregateId, EVENT extends AbstractEvent<ID>> {
+public interface EventStore<ID extends RootAggregateId, EVENT extends Event<ID>> {
 
 	boolean exists(ID id);
 	List<EVENT> loadEvents(ID id);

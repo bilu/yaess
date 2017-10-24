@@ -9,24 +9,24 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerEventStoreWrapperRepository;
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
-import pl.biltec.yaess.core.adapters.store.EventStore;
-import pl.biltec.yaess.clp.ports.customer.CustomerApplicationService;
+import pl.biltec.yaess.clp.ports.customer.CustomerCommandService;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CustomerCommand;
 import pl.biltec.yaess.clp.ports.customer.exception.UnsupportedCommandException;
+import pl.biltec.yaess.core.adapters.store.EventStore;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CustomerApplicationServiceTest {
+public class CustomerCommandServiceTest {
 
-	private CustomerApplicationService customerApplicationService;
+	private CustomerCommandService customerCommandService;
 
 	@Before
 	public void setUp() throws Exception {
 		//given
 		EventStore eventStore = Mockito.mock(EventStore.class);
-		Mockito.when(eventStore.loadEvents(Mockito.any(CustomerId.class))).thenReturn(Collections.emptyList());
-		customerApplicationService = new CustomerApplicationService(new CustomerEventStoreWrapperRepository(eventStore));
+		Mockito.when(eventStore.loadEvents(Mockito.any(RootAggregateId.class))).thenReturn(Collections.emptyList());
+		customerCommandService = new CustomerCommandService(new CustomerEventStoreWrapperRepository(eventStore));
 	}
 
 
@@ -34,7 +34,7 @@ public class CustomerApplicationServiceTest {
 	public void shouldThrowExceptionForNotSupportedCommandCommand() throws Exception {
 		//when
 		try {
-			customerApplicationService.execute(newUndefinedCustomerCommand());
+			customerCommandService.execute(newUndefinedCustomerCommand());
 			Fail.fail("Exception expected");
 		}
 		catch (Exception e) {
@@ -48,7 +48,7 @@ public class CustomerApplicationServiceTest {
 		return new CustomerCommand() {
 
 			@Override
-			public CustomerId getId() {
+			public RootAggregateId getId() {
 
 				return null;
 			}
@@ -63,7 +63,7 @@ public class CustomerApplicationServiceTest {
 
 	@Test
 	public void shouldNotThrowExceptionForSupportedCustomerCommand() throws Exception {
-		customerApplicationService.execute(new CreateCustomerCommand("test", new CustomerId()));
+		customerCommandService.execute(new CreateCustomerCommand("test", new RootAggregateId()));
 		//then no exception thrown
 	}
 

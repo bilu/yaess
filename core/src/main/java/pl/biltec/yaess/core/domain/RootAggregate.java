@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Event<ID>> implements Serializable {
+public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Event> implements Serializable {
 
 	protected ID id;
 	/**

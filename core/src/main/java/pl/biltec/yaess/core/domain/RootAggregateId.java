@@ -7,7 +7,7 @@ import java.util.UUID;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public abstract class RootAggregateId implements Serializable {
+public class RootAggregateId implements Serializable {
 
 	private UUID id;
 

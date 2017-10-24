@@ -1,4 +1,4 @@
-package pl.biltec.yaess.core.adapters.store;
+package pl.biltec.yaess.core.adapters.store.memory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -11,12 +11,12 @@ import pl.biltec.yaess.core.domain.RootAggregate;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class EventStoreWrapperRepository<ID extends RootAggregateId, EVENT extends Event, ROOT extends RootAggregate<ID, EVENT>> implements Repository<ID, EVENT, ROOT> {
+public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT extends Event, ROOT extends RootAggregate<ID, EVENT>> implements Repository<ID, EVENT, ROOT> {
 
-	protected EventStore<ID, EVENT> eventStore;
+	protected InMemoryEventStore eventStore;
 	private Class<ROOT> rootClass;
 
-	public EventStoreWrapperRepository(EventStore<ID, EVENT> eventStore, Class<ROOT> rootClass) {
+	public InMemoryEventStoreRepository(InMemoryEventStore eventStore, Class<ROOT> rootClass) {
 
 		Contract.notNull(eventStore, "eventStore");
 		Contract.notNull(rootClass, "rootClass");
@@ -41,19 +41,24 @@ public class EventStoreWrapperRepository<ID extends RootAggregateId, EVENT exten
 	public ROOT get(ID id) {
 
 		//		return new ROOT(eventStore.loadEvents(rootAggregateId));
-		return invokeConstructor(rootClass, eventStore.loadEvents(id));
+		return invokeConstructor(rootClass, (List<EVENT>) eventStore.loadEvents(id.toString(), getRootAggregateName()));
 	}
 
 	@Override
 	public void save(ROOT rootAggregate) {
 
-		eventStore.appendEvents(rootAggregate.id(), rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
+		eventStore.appendEvents(rootAggregate.id().toString(), getRootAggregateName(), rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
 		rootAggregate.clearUncommittedEvents();
+	}
+
+	private String getRootAggregateName() {
+
+		return rootClass.getSimpleName();
 	}
 
 	@Override
 	public boolean exists(ID id) {
 
-		return eventStore.exists(id);
+		return eventStore.exists(id.toString(), getRootAggregateName());
 	}
 }

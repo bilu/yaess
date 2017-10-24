@@ -1,21 +1,21 @@
 package pl.biltec.yaess.clp.ports.customer.command;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
 public class RenameCustomerCommand extends CustomerCommand {
 
 	private String newName;
-	private CustomerId id;
+	private RootAggregateId id;
 
-	public RenameCustomerCommand(String newName, CustomerId id) {
+	public RenameCustomerCommand(String newName, RootAggregateId id) {
 
 		this.newName = newName;
 		this.id = id;
 	}
 
 	@Override
-	public CustomerId getId() {
+	public RootAggregateId getId() {
 
 		return id;
 	}

@@ -1,15 +1,16 @@
-package pl.biltec.yaess.clp.domain.customer.event;
+package pl.biltec.yaess.clp.event;
 
 import java.time.LocalDateTime;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CustomerRenamedEvent extends CustomerEvent {
+public class CustomerRenamedEvent extends Event {
 
 	private String newName;
 
-	public CustomerRenamedEvent(CustomerId id, String newName, LocalDateTime timestamp) {
+	public CustomerRenamedEvent(RootAggregateId id, String newName, LocalDateTime timestamp) {
 
 		super(id, timestamp);
 		this.newName = newName;

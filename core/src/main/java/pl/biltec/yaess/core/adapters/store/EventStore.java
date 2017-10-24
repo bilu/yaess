@@ -6,7 +6,7 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface EventStore<ID extends RootAggregateId, EVENT extends Event<ID>> {
+public interface EventStore<ID extends RootAggregateId, EVENT extends Event> {
 
 	boolean exists(ID id);
 	List<EVENT> loadEvents(ID id);

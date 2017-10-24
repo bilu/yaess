@@ -1,19 +1,19 @@
 package pl.biltec.yaess.clp.ports.customer.command;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
 public class DeleteCustomerCommand extends CustomerCommand {
 
-	private CustomerId id;
+	private RootAggregateId id;
 
-	public DeleteCustomerCommand(CustomerId id) {
+	public DeleteCustomerCommand(RootAggregateId id) {
 
 		this.id = id;
 	}
 
 	@Override
-	public CustomerId getId() {
+	public RootAggregateId getId() {
 
 		return id;
 	}

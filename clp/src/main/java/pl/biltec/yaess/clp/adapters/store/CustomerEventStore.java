@@ -1,10 +1,10 @@
 package pl.biltec.yaess.clp.adapters.store;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
-import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
 import pl.biltec.yaess.core.adapters.store.EventStore;
+import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface CustomerEventStore extends EventStore<CustomerId, CustomerEvent> {
+public interface CustomerEventStore extends EventStore<RootAggregateId, Event> {
 
 }

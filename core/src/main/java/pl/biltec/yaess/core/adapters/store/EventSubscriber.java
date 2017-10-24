@@ -4,7 +4,7 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface EventSubscriber<ID extends RootAggregateId, EVENT extends Event<ID>> {
+public interface EventSubscriber<ID extends RootAggregateId, EVENT extends Event> {
 
 	void handleEvent(final EVENT event);
 

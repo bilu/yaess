@@ -6,21 +6,22 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import pl.biltec.yaess.clp.domain.customer.event.CustomerCreatedEvent;
-import pl.biltec.yaess.clp.domain.customer.event.CustomerDeletedEvent;
-import pl.biltec.yaess.clp.domain.customer.event.CustomerEvent;
-import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
-import pl.biltec.yaess.clp.domain.customer.exception.UnsupportedEventException;
+import pl.biltec.yaess.clp.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.event.CustomerDeletedEvent;
+import pl.biltec.yaess.clp.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.common.Contract;
+import pl.biltec.yaess.core.common.exception.UnsupportedEventException;
+import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregate;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
 /**
  * Jeśli nie chcemy trzymać oddzielnie stanu oraz metod biznesowych Customera to należy pamiętać aby tylko zdarzenia (metody apply) mutowały stan.
  * Nie mutujemy stanu z poziomu metod biznesowych bo wystąpi problem przy odtwarzaniu.
  */
-public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
+public class Customer extends RootAggregate<RootAggregateId, Event> {
 
 	//DOMAIN attributes
 	private boolean created;
@@ -30,14 +31,14 @@ public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
 	private LocalDateTime lastUpdateTimestamp;
 
 
-	public Customer(List<CustomerEvent> events) {
+	public Customer(List<Event> events) {
 		super(events);
 	}
 
 	public Customer(String name) {
 		// TODO: [pbilewic] 09.10.17 czy to nie powinien być wyjątek klasy DomainOperationException?
 		Contract.notNull(name, "newName");
-		apply(new CustomerCreatedEvent(new CustomerId(), name, LocalDateTime.now()));
+		apply(new CustomerCreatedEvent(new RootAggregateId(), name, LocalDateTime.now()));
 	}
 
 
@@ -58,11 +59,12 @@ public class Customer extends RootAggregate<CustomerId, CustomerEvent> {
 		//czy powinienem wywołać rename() czy stworzyć event?!
 		LocalDateTime now = LocalDateTime.now();
 		rename(name + "_USUNIĘTY_" + now);
+		deleted = true;
 		apply(new CustomerDeletedEvent(id, now));
 	}
 
 	//ES Mutowanie stanu zdarzeniami
-	protected void mutateState(CustomerEvent event) {
+	protected void mutateState(Event event) {
 
 		//tego będzie dużo??
 		//     https://stackoverflow.com/questions/3935832/java-equivalent-to-c-sharp-dynamic-class-type

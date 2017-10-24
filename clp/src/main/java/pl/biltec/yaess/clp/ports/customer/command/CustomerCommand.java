@@ -1,11 +1,11 @@
 package pl.biltec.yaess.clp.ports.customer.command;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
 public abstract class CustomerCommand {
 
-	public abstract CustomerId getId();
+	public abstract RootAggregateId getId();
 
 	@Override
 	public abstract String toString();

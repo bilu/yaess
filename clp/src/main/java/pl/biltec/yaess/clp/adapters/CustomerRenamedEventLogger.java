@@ -3,12 +3,12 @@ package pl.biltec.yaess.clp.adapters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pl.biltec.yaess.clp.domain.customer.CustomerId;
-import pl.biltec.yaess.clp.domain.customer.event.CustomerRenamedEvent;
+import pl.biltec.yaess.clp.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CustomerRenamedEventLogger implements EventSubscriber<CustomerId, CustomerRenamedEvent> {
+public class CustomerRenamedEventLogger implements EventSubscriber<RootAggregateId, CustomerRenamedEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRenamedEventLogger.class);
 

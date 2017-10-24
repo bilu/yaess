@@ -1,4 +1,4 @@
-package pl.biltec.yaess.clp.event;
+package pl.biltec.yaess.clp.domain.event;
 
 import java.time.LocalDateTime;
 

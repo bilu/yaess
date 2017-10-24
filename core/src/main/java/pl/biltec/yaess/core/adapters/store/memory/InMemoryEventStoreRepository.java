@@ -22,7 +22,7 @@ public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT exte
 		Contract.notNull(rootClass, "rootClass");
 
 		this.eventStore = eventStore;
-		// TODO [bilu] 22.10.17 switch direct Class usage in somthing more dynamic eg ParameterizedType
+		// TODO [bilu] 22.10.17 switch direct Class usage to something more dynamic eg ParameterizedType
 		this.rootClass = rootClass;
 	}
 
@@ -40,18 +40,19 @@ public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT exte
 	@Override
 	public ROOT get(ID id) {
 
+		// TODO [bilu] 24.10.17 constructor vs newInstance, performance context 
 		//		return new ROOT(eventStore.loadEvents(rootAggregateId));
-		return invokeConstructor(rootClass, (List<EVENT>) eventStore.loadEvents(id.toString(), getRootAggregateName()));
+		return invokeConstructor(rootClass, (List<EVENT>) eventStore.loadEvents(id.toString(), rootAggregateName()));
 	}
 
 	@Override
 	public void save(ROOT rootAggregate) {
 
-		eventStore.appendEvents(rootAggregate.id().toString(), getRootAggregateName(), rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
+		eventStore.appendEvents(rootAggregate.id().toString(), rootAggregateName(), rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
 		rootAggregate.clearUncommittedEvents();
 	}
 
-	private String getRootAggregateName() {
+	private String rootAggregateName() {
 
 		return rootClass.getSimpleName();
 	}
@@ -59,6 +60,6 @@ public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT exte
 	@Override
 	public boolean exists(ID id) {
 
-		return eventStore.exists(id.toString(), getRootAggregateName());
+		return eventStore.exists(id.toString(), rootAggregateName());
 	}
 }

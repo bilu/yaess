@@ -1,4 +1,4 @@
-package pl.biltec.yaess.clp.event;
+package pl.biltec.yaess.clp.domain.event;
 
 import java.time.LocalDateTime;
 
@@ -6,10 +6,13 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CustomerDeletedEvent extends Event {
+/**
+ * Event from other bounded context
+ */
+public class CustomerHasDiedEvent extends Event {
 
 
-	public CustomerDeletedEvent(RootAggregateId id, LocalDateTime timestamp) {
+	public CustomerHasDiedEvent(RootAggregateId id, LocalDateTime timestamp) {
 
 		super(id, timestamp);
 	}

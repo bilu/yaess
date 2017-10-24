@@ -13,6 +13,7 @@ public interface EventStore<ID extends RootAggregateId, EVENT extends Event> {
 	List<EVENT> loadEvents(ID id, int skipEvents, int maxCount);
 	void appendEvents(ID id, List<EVENT> events, long expectedConcurrencyVersion);
 
+	// TODO [bilu] 24.10.17 repository responsibility, not event store
 	void addEventSubscriber(EventSubscriber<ID, EVENT> eventSubscriber);
 	void addEventSubscriber(ExtendedEventSubscriber eventSubscriberExtended);
 

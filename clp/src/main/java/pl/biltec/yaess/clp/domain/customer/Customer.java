@@ -7,9 +7,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
-import pl.biltec.yaess.clp.event.CustomerCreatedEvent;
-import pl.biltec.yaess.clp.event.CustomerDeletedEvent;
-import pl.biltec.yaess.clp.event.CustomerRenamedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.common.exception.UnsupportedEventException;
 import pl.biltec.yaess.core.domain.Event;

@@ -9,8 +9,8 @@ import org.assertj.core.api.Fail;
 import org.junit.Test;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.clp.event.CustomerCreatedEvent;
-import pl.biltec.yaess.clp.event.CustomerRenamedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.common.exception.ContractBrokenException;
 import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;

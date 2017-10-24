@@ -1,6 +1,6 @@
 package pl.biltec.yaess.clp.ports.customer;
 
-import pl.biltec.yaess.clp.event.CustomerHasDiedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerHasDiedEvent;
 
 
 /**

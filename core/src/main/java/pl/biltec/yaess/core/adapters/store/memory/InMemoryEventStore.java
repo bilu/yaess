@@ -40,7 +40,7 @@ public class InMemoryEventStore {
 			.isPresent();
 	}
 
-	private Stream<? extends Event> eventStream(String rootAggregateId, String rootAggregateName) {
+	private Stream<Event> eventStream(String rootAggregateId, String rootAggregateName) {
 
 		return orderedEvents.stream()
 			.filter(event -> event.getRootAggregateName().equals(rootAggregateName))
@@ -48,7 +48,7 @@ public class InMemoryEventStore {
 			.map(event -> (Event) event.getSerializedEvent());
 	}
 
-	public List<? extends Event> loadEvents(String rootAggregateId, String rootAggregateName) {
+	public List<Event> loadEvents(String rootAggregateId, String rootAggregateName) {
 
 		Contract.notNull(rootAggregateId, "rootAggregateId");
 		Contract.notNull(rootAggregateName, "rootAggregateName");
@@ -57,7 +57,7 @@ public class InMemoryEventStore {
 			.collect(Collectors.toList());
 	}
 
-	public List<? extends Event> loadEvents(String rootAggregateId, String rootAggregateName, int skipEvents, int maxCount) {
+	public List<Event> loadEvents(String rootAggregateId, String rootAggregateName, int skipEvents, int maxCount) {
 
 		return eventStream(rootAggregateId, rootAggregateName)
 			.skip(skipEvents)
@@ -65,7 +65,7 @@ public class InMemoryEventStore {
 			.collect(Collectors.toList());
 	}
 
-	public synchronized void appendEvents(String rootAggregateId, String rootAggregateName, List<? extends Event> events, long currentConcurrencyVersion) {
+	public synchronized void appendEvents(String rootAggregateId, String rootAggregateName, List<Event> events, long currentConcurrencyVersion) {
 
 		Contract.notNull(rootAggregateId, "rootAggregateId");
 		Contract.notNull(rootAggregateName, "rootAggregateName");

@@ -1,15 +1,14 @@
 package pl.biltec.yaess.core.adapters.store;
 
-import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregate;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface SnapshotStore<ID extends RootAggregateId, EVENT extends Event, ROOT extends RootAggregate<ID, EVENT>> {
+public interface SnapshotStore<ROOT extends RootAggregate> {
 
-	boolean exists(ID id);
+	boolean exists(RootAggregateId id);
 
-	ROOT loadSnapshot(ID id);
+	ROOT loadSnapshot(RootAggregateId id);
 
 	void saveSnapshot(ROOT rootAggregate);
 }

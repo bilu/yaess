@@ -21,7 +21,7 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
  * Jeśli nie chcemy trzymać oddzielnie stanu oraz metod biznesowych Customera to należy pamiętać aby tylko zdarzenia (metody apply) mutowały stan.
  * Nie mutujemy stanu z poziomu metod biznesowych bo wystąpi problem przy odtwarzaniu.
  */
-public class Customer extends RootAggregate<RootAggregateId, Event> {
+public class Customer extends RootAggregate {
 
 	//DOMAIN attributes
 	private boolean created;
@@ -30,8 +30,8 @@ public class Customer extends RootAggregate<RootAggregateId, Event> {
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
 
-
 	public Customer(List<Event> events) {
+
 		super(events);
 	}
 
@@ -40,7 +40,6 @@ public class Customer extends RootAggregate<RootAggregateId, Event> {
 		Contract.notNull(name, "newName");
 		apply(new CustomerCreatedEvent(new RootAggregateId(), name, LocalDateTime.now()));
 	}
-
 
 	public void rename(String newName) {
 

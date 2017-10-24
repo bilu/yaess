@@ -11,16 +11,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import pl.biltec.yaess.core.common.Contract;
 
 
-public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Event> implements Serializable {
+public abstract class RootAggregate implements Serializable {
 
-	protected ID id;
+	protected RootAggregateId id;
 	/**
 	 * Not accessible to edit
 	 */
 	private long concurrencyVersion = 0;
-	protected List<EVENT> uncommittedEvents = new ArrayList<>();
+	protected List<Event> uncommittedEvents = new ArrayList<>();
 
-	public RootAggregate(List<EVENT> events) {
+	public RootAggregate(List<Event> events) {
 
 		apply(events);
 	}
@@ -29,7 +29,7 @@ public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Ev
 
 	}
 
-	public ID id() {
+	public RootAggregateId id() {
 
 		return id;
 	}
@@ -47,7 +47,7 @@ public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Ev
 		this.concurrencyVersion++;
 	}
 
-	public List<EVENT> getUncommittedEvents() {
+	public List<Event> getUncommittedEvents() {
 
 		return Collections.unmodifiableList(uncommittedEvents);
 	}
@@ -60,12 +60,12 @@ public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Ev
 		uncommittedEvents.clear();
 	}
 
-	public void apply(List<EVENT> events) {
+	public void apply(List<Event> events) {
 
 		Contract.notNull(events, "events");
 		events.stream()
 			.peek(event -> {
-					if(id != null) {
+					if (id != null) {
 						boolean eventIdMatchRootAggreagteId = (id == event.rootAggregateId());
 						Contract.isTrue(eventIdMatchRootAggreagteId, String.format("Event rootAggregateId=%s not match RootAggregate rootAggregateId=%s", id, event.rootAggregateId()));
 					}
@@ -74,7 +74,7 @@ public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Ev
 			.forEach(this::mutateState);
 	}
 
-	protected void apply(EVENT event) {
+	protected void apply(Event event) {
 
 		//mutate Aggregate for incoming business events
 		mutateState(event);
@@ -82,7 +82,7 @@ public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Ev
 		uncommittedEvents.add(event);
 	}
 
-	protected abstract void mutateState(EVENT event);
+	protected abstract void mutateState(Event event);
 
 	@Override
 	public boolean equals(Object o) {
@@ -93,7 +93,7 @@ public abstract class RootAggregate<ID extends RootAggregateId, EVENT extends Ev
 		if (!(o instanceof RootAggregate))
 			return false;
 
-		RootAggregate<?, ?> that = (RootAggregate<?, ?>) o;
+		RootAggregate that = (RootAggregate) o;
 
 		return new EqualsBuilder()
 			.append(concurrencyVersion, that.concurrencyVersion)

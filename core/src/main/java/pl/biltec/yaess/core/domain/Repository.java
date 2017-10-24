@@ -3,11 +3,11 @@ package pl.biltec.yaess.core.domain;
 import java.util.ConcurrentModificationException;
 
 
-public interface Repository<ID extends RootAggregateId, EVENT extends Event, ROOT extends RootAggregate<ID, EVENT>> {
+public interface Repository<ROOT extends RootAggregate> {
 
-	ROOT get(ID id);
+	ROOT get(RootAggregateId id);
 
-	default ROOT get(ID id, long concurrencyVersion) {
+	default ROOT get(RootAggregateId id, long concurrencyVersion) {
 
 		ROOT order = get(id);
 		if (order.concurrencyVersion() != concurrencyVersion) {
@@ -18,5 +18,5 @@ public interface Repository<ID extends RootAggregateId, EVENT extends Event, ROO
 
 	void save(ROOT customer);
 
-	boolean exists(ID id);
+	boolean exists(RootAggregateId id);
 }

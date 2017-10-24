@@ -11,7 +11,7 @@ import pl.biltec.yaess.core.domain.RootAggregate;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT extends Event, ROOT extends RootAggregate<ID, EVENT>> implements Repository<ID, EVENT, ROOT> {
+public class InMemoryEventStoreRepository<ROOT extends RootAggregate> implements Repository<ROOT> {
 
 	protected InMemoryEventStore eventStore;
 	private Class<ROOT> rootClass;
@@ -26,7 +26,7 @@ public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT exte
 		this.rootClass = rootClass;
 	}
 
-	private ROOT invokeConstructor(Class<ROOT> clazz, List<EVENT> events) {
+	private ROOT invokeConstructor(Class<ROOT> clazz, List<Event> events) {
 
 		try {
 			Constructor<ROOT> constructor = clazz.getConstructor(List.class);
@@ -38,11 +38,11 @@ public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT exte
 	}
 
 	@Override
-	public ROOT get(ID id) {
+	public ROOT get(RootAggregateId id) {
 
-		// TODO [bilu] 24.10.17 constructor vs newInstance, performance context 
+		// TODO [bilu] 24.10.17 constructor vs newInstance, performance context
 		//		return new ROOT(eventStore.loadEvents(rootAggregateId));
-		return invokeConstructor(rootClass, (List<EVENT>) eventStore.loadEvents(id.toString(), rootAggregateName()));
+		return invokeConstructor(rootClass, (List<Event>) eventStore.loadEvents(id.toString(), rootAggregateName()));
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class InMemoryEventStoreRepository<ID extends RootAggregateId, EVENT exte
 	}
 
 	@Override
-	public boolean exists(ID id) {
+	public boolean exists(RootAggregateId id) {
 
 		return eventStore.exists(id.toString(), rootAggregateName());
 	}

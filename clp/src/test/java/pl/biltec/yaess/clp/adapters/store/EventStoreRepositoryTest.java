@@ -9,19 +9,17 @@ import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStoreRepository;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
-import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.Repository;
-import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
 public class EventStoreRepositoryTest {
 
-	private Repository<RootAggregateId, Event, Customer> customerRepository;
+	private Repository<Customer> customerRepository;
 
 	@Before
 	public void setUp() throws Exception {
 
-//		customerRepository = new CustomerEventStoreWrapperRepository(new InMemoryEventStore());
+//		customerRepository = new CustomerRepositoryOverEventStore(new InMemoryEventStore());
 		customerRepository = new InMemoryEventStoreRepository(new InMemoryEventStore(), Customer.class);
 
 	}

@@ -1,7 +1,6 @@
 package pl.biltec.yaess.clp.ports.customer;
 
 import pl.biltec.yaess.clp.event.CustomerHasDiedEvent;
-import pl.biltec.yaess.clp.ports.customer.command.DeleteCustomerCommand;
 
 
 /**
@@ -18,6 +17,7 @@ public class CustomerEventHandler {
 	private CustomerCommandService customerCommandService;
 
 	public void handle(CustomerHasDiedEvent event) {
-		customerCommandService.execute(new DeleteCustomerCommand(event.rootAggregateId()));
+
+		customerCommandService.delete(event.rootAggregateId().toString());
 	}
 }

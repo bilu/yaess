@@ -5,11 +5,6 @@ import java.util.function.Consumer;
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerAlreadyCreatedException;
-import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
-import pl.biltec.yaess.clp.ports.customer.command.CustomerCommand;
-import pl.biltec.yaess.clp.ports.customer.command.DeleteCustomerCommand;
-import pl.biltec.yaess.clp.ports.customer.command.RenameCustomerCommand;
-import pl.biltec.yaess.clp.ports.customer.exception.UnsupportedCommandException;
 import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
@@ -33,14 +28,11 @@ public class CustomerCommandService {
 		this.customerRepository = customerRepository;
 	}
 
-	public void execute(CustomerCommand command) {
+	public String createCustomer(String customerName) {
 
-		throw new UnsupportedCommandException(command);
-	}
+		Contract.notNull(customerName, "customerName");
 
-	public String execute(CreateCustomerCommand command) {
-
-		Customer customer = new Customer(command.getName());
+		Customer customer = new Customer(customerName);
 		if (customerRepository.exists(customer.id())) {
 			throw new CustomerAlreadyCreatedException(customer.id());
 		}
@@ -48,19 +40,21 @@ public class CustomerCommandService {
 		return customer.id().toString();
 	}
 
-	public void execute(RenameCustomerCommand command) {
+	public void rename(String customerId, String newName) {
 
-		update(command.getId(), customer -> customer.rename(command.getNewName()));
+		Contract.notNull(newName, "newName");
+		action(customerId, customer -> customer.rename(newName));
 	}
 
-	public void execute(DeleteCustomerCommand command) {
+	public void delete(String customerId) {
 
-		update(command.getId(), customer -> customer.delete());
+		action(customerId, customer -> customer.delete());
 	}
 
-	void update(RootAggregateId RootAggregateId, Consumer<Customer> action) {
+	void action(String customerId, Consumer<Customer> action) {
 
-		Customer customer = customerRepository.get(RootAggregateId);
+		Contract.notNull(customerId, "customerId");
+		Customer customer = customerRepository.get(new RootAggregateId(customerId));
 		action.accept(customer);
 		customerRepository.save(customer);
 	}

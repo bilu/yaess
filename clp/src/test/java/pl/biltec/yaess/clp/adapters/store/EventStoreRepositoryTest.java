@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
-import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStoreRepository;
+import pl.biltec.yaess.core.adapters.store.RepositoryOverEventStore;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
 import pl.biltec.yaess.core.domain.Repository;
 
@@ -20,7 +20,7 @@ public class EventStoreRepositoryTest {
 	public void setUp() throws Exception {
 
 //		customerRepository = new CustomerRepositoryOverEventStore(new InMemoryEventStore());
-		customerRepository = new InMemoryEventStoreRepository(new InMemoryEventStore(), Customer.class);
+		customerRepository = new RepositoryOverEventStore(new InMemoryEventStore(), Customer.class);
 
 	}
 

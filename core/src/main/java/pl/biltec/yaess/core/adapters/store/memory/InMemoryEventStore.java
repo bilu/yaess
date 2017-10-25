@@ -15,65 +15,72 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
 import pl.biltec.yaess.core.adapters.store.ExtendedEventSubscriber;
 import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
 import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregate;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
 public class InMemoryEventStore implements EventStore {
 
 	private List<EventRecord> orderedEvents = Collections.synchronizedList(new LinkedList<>());
+	// TODO [bilu] 25.10.17 subscribers and publishing should not be managed by EventStore
 	private Map<Class<Event>, List<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
 	private Set<ExtendedEventSubscriber> subscribersExtended = Collections.synchronizedSet(new HashSet<>());
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	public boolean exists(RootAggregateId id, String rootAggregateName) {
+	@Override
+	public boolean exists(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass) {
 
 		Contract.notNull(id, "id");
-		Contract.notNull(rootAggregateName, "rootAggregateName");
+		Contract.notNull(rootAggregateClass, "rootAggregateClass");
 
-		return eventStream(id, rootAggregateName)
+		return eventStream(id, rootAggregateClass)
 			.findFirst()
 			.isPresent();
 	}
 
-	private Stream<Event> eventStream(RootAggregateId id, String rootAggregateName) {
+	private Stream<Event> eventStream(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass) {
 
 		return orderedEvents.stream()
-			.filter(event -> event.getRootAggregateName().equals(rootAggregateName))
+			.filter(event -> event.getRootAggregateName().equals(rootAggregateClass.getSimpleName().toString()))
 			.filter(event -> event.getRootId().equals(id.toString()))
 			.map(event -> (Event) event.getSerializedEvent());
 	}
 
-	public List<Event> loadEvents(RootAggregateId id, String rootAggregateName) {
+	@Override
+	public List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass) {
 
 		Contract.notNull(id, "id");
-		Contract.notNull(rootAggregateName, "rootAggregateName");
+		Contract.notNull(rootAggregateClass, "rootAggregateClass");
 
-		return eventStream(id, rootAggregateName)
+		return eventStream(id, rootAggregateClass)
 			.collect(Collectors.toList());
 	}
 
-	public List<Event> loadEvents(RootAggregateId id, String rootAggregateName, int skipEvents, int maxCount) {
+	@Override
+	public List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, int skipEvents, int maxCount) {
 
-		return eventStream(id, rootAggregateName)
+		return eventStream(id, rootAggregateClass)
 			.skip(skipEvents)
 			.limit(maxCount)
 			.collect(Collectors.toList());
 	}
 
-	public synchronized void appendEvents(RootAggregateId id, String rootAggregateName, List<Event> events, long currentConcurrencyVersion) {
+	@Override
+	public synchronized void appendEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, List<Event> events, long currentConcurrencyVersion) {
 
 		Contract.notNull(id, "id");
-		Contract.notNull(rootAggregateName, "rootAggregateName");
+		Contract.notNull(rootAggregateClass, "rootAggregateName");
 		Contract.notNull(events, "events");
 		Contract.notNull(currentConcurrencyVersion, "currentConcurrencyVersion");
 
-		if (exists(id, rootAggregateName)) {
-			long calculatedConcurrencyVersion = eventStream(id, rootAggregateName).count();
+		if (exists(id, rootAggregateClass)) {
+			long calculatedConcurrencyVersion = eventStream(id, rootAggregateClass).count();
 
 			if (calculatedConcurrencyVersion != (currentConcurrencyVersion - events.size())) {
 				throw new ConcurrentModificationException(id.toString(), currentConcurrencyVersion, calculatedConcurrencyVersion);
@@ -84,7 +91,7 @@ public class InMemoryEventStore implements EventStore {
 
 		events.forEach(
 			newEvent -> {
-				orderedEvents.add(convertToEventRecord(newEvent, rootAggregateName));
+				orderedEvents.add(convertToEventRecord(newEvent, rootAggregateClass));
 				toBePublished.add(newEvent);
 			}
 		);
@@ -97,10 +104,10 @@ public class InMemoryEventStore implements EventStore {
 		//		publishExtended(toBePublished);
 	}
 
-	private EventRecord convertToEventRecord(Event newEvent, String rootAggregateName) {
+	private EventRecord convertToEventRecord(Event newEvent, Class<? extends RootAggregate> rootAggregateClass) {
 
 		return new EventRecord(
-			rootAggregateName,
+			rootAggregateClass.getSimpleName(),
 			newEvent.rootAggregateId().toString(),
 			newEvent.getClass().getSimpleName(),
 			newEvent.version(),

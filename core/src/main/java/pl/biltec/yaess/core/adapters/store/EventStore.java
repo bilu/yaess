@@ -13,7 +13,7 @@ public interface EventStore {
 
 	List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass);
 
-	List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, int skipEvents, int maxCount);
+	List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, long skipEvents, long maxCount);
 
 	void appendEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, List<Event> events, long currentConcurrencyVersion);
 }

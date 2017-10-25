@@ -6,12 +6,14 @@ import pl.biltec.yaess.core.domain.RootAggregate;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public interface SnapshotStore<ROOT extends RootAggregate> {
+public interface SnapshotStore {
 
+	// TODO [bilu] 25.10.17 is it really necessary?
 	boolean exists(RootAggregateId id);
 
-	Optional<ROOT> loadSnapshot(RootAggregateId id);
+	Optional<? extends RootAggregate> loadSnapshot(RootAggregateId id);
 
-	void saveSnapshot(ROOT rootAggregate);
+	void createAndSaveSnapshot(RootAggregate rootAggregate);
+
 }
 

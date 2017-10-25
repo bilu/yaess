@@ -63,7 +63,7 @@ public class InMemoryEventStore implements EventStore {
 	}
 
 	@Override
-	public List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, int skipEvents, int maxCount) {
+	public List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, long skipEvents, long maxCount) {
 
 		return eventStream(id, rootAggregateClass)
 			.skip(skipEvents)

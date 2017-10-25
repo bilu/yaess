@@ -43,7 +43,7 @@ public class InMemoryEventStoreTest {
 	@Test
 	public void shouldFindNoEventsForNotExistingCustomer() throws Exception {
 		//when
-		List<Event> customerEvents = (List<Event>) store.loadEvents(new RootAggregateId(UUID.randomUUID()).toString(), Customer.class.getSimpleName());
+		List<Event> customerEvents = (List<Event>) store.loadEvents(new RootAggregateId(UUID.randomUUID()), Customer.class.getSimpleName());
 
 		//then
 		Assertions.assertThat(customerEvents).isNotNull();
@@ -57,10 +57,10 @@ public class InMemoryEventStoreTest {
 			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId.toString(), rootAggregateName, inputEvents, 0);
+		store.appendEvents(customerId, rootAggregateName, inputEvents, 0);
 
 		//when
-		List<Event> customerEvents = store.loadEvents(customerId.toString(), rootAggregateName);
+		List<Event> customerEvents = store.loadEvents(customerId, rootAggregateName);
 
 		//then
 		Assertions.assertThat(customerEvents).isNotNull();
@@ -77,10 +77,10 @@ public class InMemoryEventStoreTest {
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId.toString(), rootAggregateName, inputEvents, 0);
+		store.appendEvents(customerId, rootAggregateName, inputEvents, 0);
 
 		//when
-		List<Event> customerEvents = store.loadEvents(customerId.toString(), rootAggregateName);
+		List<Event> customerEvents = store.loadEvents(customerId, rootAggregateName);
 
 		//then
 		Assertions.assertThat(customerEvents).isNotNull();
@@ -98,10 +98,10 @@ public class InMemoryEventStoreTest {
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId.toString(), rootAggregateName, inputEvents, 0);
+		store.appendEvents(customerId, rootAggregateName, inputEvents, 0);
 
 		//when
-		List<Event> customerEvents = store.loadEvents(customerId.toString(), rootAggregateName, 2, 1);
+		List<Event> customerEvents = store.loadEvents(customerId, rootAggregateName, 2, 1);
 
 		//then
 		Assertions.assertThat(customerEvents).isNotNull();
@@ -121,20 +121,20 @@ public class InMemoryEventStoreTest {
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
 		);
 
-		store.appendEvents(customerId.toString(), rootAggregateName, initialEvents, 0);
-		List<Event> customerEvents1 = store.loadEvents(customerId.toString(), rootAggregateName);
-		List<Event> customerEvents2 = store.loadEvents(customerId.toString(), rootAggregateName);
+		store.appendEvents(customerId, rootAggregateName, initialEvents, 0);
+		List<Event> customerEvents1 = store.loadEvents(customerId, rootAggregateName);
+		List<Event> customerEvents2 = store.loadEvents(customerId, rootAggregateName);
 
 		//when
-		store.appendEvents(customerId.toString(), rootAggregateName, anotherEvents, customerEvents1.size() + anotherEvents.size());
+		store.appendEvents(customerId, rootAggregateName, anotherEvents, customerEvents1.size() + anotherEvents.size());
 		try {
-			store.appendEvents(customerId.toString(), rootAggregateName, anotherEvents, customerEvents2.size());
+			store.appendEvents(customerId, rootAggregateName, anotherEvents, customerEvents2.size());
 			Fail.fail("Exception expected");
 		}
 		catch (Exception e) {
 			Assertions.assertThat(e)
 				.isInstanceOf(ConcurrentModificationException.class)
-				.hasMessageContaining(customerId.toString().toString());
+				.hasMessageContaining(customerId.toString());
 		}
 	}
 

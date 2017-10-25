@@ -42,13 +42,13 @@ public class InMemoryEventStoreRepository<ROOT extends RootAggregate> implements
 
 		// TODO [bilu] 24.10.17 constructor vs newInstance, performance context
 		//		return new ROOT(eventStore.loadEvents(rootAggregateId));
-		return invokeConstructor(rootClass, (List<Event>) eventStore.loadEvents(id.toString(), rootAggregateName()));
+		return invokeConstructor(rootClass, eventStore.loadEvents(id, rootAggregateName()));
 	}
 
 	@Override
 	public void save(ROOT rootAggregate) {
 
-		eventStore.appendEvents(rootAggregate.id().toString(), rootAggregateName(), rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
+		eventStore.appendEvents(rootAggregate.id(), rootAggregateName(), rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
 		rootAggregate.clearUncommittedEvents();
 	}
 
@@ -60,6 +60,6 @@ public class InMemoryEventStoreRepository<ROOT extends RootAggregate> implements
 	@Override
 	public boolean exists(RootAggregateId id) {
 
-		return eventStore.exists(id.toString(), rootAggregateName());
+		return eventStore.exists(id, rootAggregateName());
 	}
 }

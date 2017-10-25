@@ -23,60 +23,60 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class InMemoryEventStore {
+public class InMemoryEventStore implements EventStore {
 
 	private List<EventRecord> orderedEvents = Collections.synchronizedList(new LinkedList<>());
 	private Map<Class<Event>, List<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
 	private Set<ExtendedEventSubscriber> subscribersExtended = Collections.synchronizedSet(new HashSet<>());
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	public boolean exists(String rootAggregateId, String rootAggregateName) {
+	public boolean exists(RootAggregateId id, String rootAggregateName) {
 
-		Contract.notNull(rootAggregateId, "rootAggregateId");
+		Contract.notNull(id, "id");
 		Contract.notNull(rootAggregateName, "rootAggregateName");
 
-		return eventStream(rootAggregateId, rootAggregateName)
+		return eventStream(id, rootAggregateName)
 			.findFirst()
 			.isPresent();
 	}
 
-	private Stream<Event> eventStream(String rootAggregateId, String rootAggregateName) {
+	private Stream<Event> eventStream(RootAggregateId id, String rootAggregateName) {
 
 		return orderedEvents.stream()
 			.filter(event -> event.getRootAggregateName().equals(rootAggregateName))
-			.filter(event -> event.getRootId().equals(rootAggregateId))
+			.filter(event -> event.getRootId().equals(id.toString()))
 			.map(event -> (Event) event.getSerializedEvent());
 	}
 
-	public List<Event> loadEvents(String rootAggregateId, String rootAggregateName) {
+	public List<Event> loadEvents(RootAggregateId id, String rootAggregateName) {
 
-		Contract.notNull(rootAggregateId, "rootAggregateId");
+		Contract.notNull(id, "id");
 		Contract.notNull(rootAggregateName, "rootAggregateName");
 
-		return eventStream(rootAggregateId, rootAggregateName)
+		return eventStream(id, rootAggregateName)
 			.collect(Collectors.toList());
 	}
 
-	public List<Event> loadEvents(String rootAggregateId, String rootAggregateName, int skipEvents, int maxCount) {
+	public List<Event> loadEvents(RootAggregateId id, String rootAggregateName, int skipEvents, int maxCount) {
 
-		return eventStream(rootAggregateId, rootAggregateName)
+		return eventStream(id, rootAggregateName)
 			.skip(skipEvents)
 			.limit(maxCount)
 			.collect(Collectors.toList());
 	}
 
-	public synchronized void appendEvents(String rootAggregateId, String rootAggregateName, List<Event> events, long currentConcurrencyVersion) {
+	public synchronized void appendEvents(RootAggregateId id, String rootAggregateName, List<Event> events, long currentConcurrencyVersion) {
 
-		Contract.notNull(rootAggregateId, "rootAggregateId");
+		Contract.notNull(id, "id");
 		Contract.notNull(rootAggregateName, "rootAggregateName");
 		Contract.notNull(events, "events");
 		Contract.notNull(currentConcurrencyVersion, "currentConcurrencyVersion");
 
-		if (exists(rootAggregateId, rootAggregateName)) {
-			long calculatedConcurrencyVersion = eventStream(rootAggregateId, rootAggregateName).count();
+		if (exists(id, rootAggregateName)) {
+			long calculatedConcurrencyVersion = eventStream(id, rootAggregateName).count();
 
 			if (calculatedConcurrencyVersion != (currentConcurrencyVersion - events.size())) {
-				throw new ConcurrentModificationException(rootAggregateId, currentConcurrencyVersion, calculatedConcurrencyVersion);
+				throw new ConcurrentModificationException(id.toString(), currentConcurrencyVersion, calculatedConcurrencyVersion);
 			}
 		}
 

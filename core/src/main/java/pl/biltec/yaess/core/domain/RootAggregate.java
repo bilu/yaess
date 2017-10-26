@@ -66,7 +66,7 @@ public abstract class RootAggregate implements Serializable {
 		events.stream()
 			.peek(event -> {
 					if (id != null) {
-						boolean eventIdMatchRootAggreagteId = (id == event.rootAggregateId());
+						boolean eventIdMatchRootAggreagteId = (id.equals(event.rootAggregateId()));
 						Contract.isTrue(eventIdMatchRootAggreagteId, String.format("Event rootAggregateId=%s not match RootAggregate rootAggregateId=%s", id, event.rootAggregateId()));
 					}
 				}

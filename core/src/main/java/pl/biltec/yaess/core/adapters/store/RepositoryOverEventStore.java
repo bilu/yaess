@@ -16,6 +16,7 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 	protected EventStore eventStore;
 	protected SnapshotStore snapshotStore;
 	private Class<ROOT> rootClass;
+	private int snapshotInterval = 5;
 
 	public RepositoryOverEventStore(EventStore eventStore, Class<ROOT> rootClass) {
 
@@ -65,7 +66,7 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 		// TODO [bilu] 25.10.17 repository (not SnapshotStore should manage where snapshot should be taken)
 		// make it async
-		if (rootAggregate.concurrencyVersion() % 50 == 0) {
+		if (rootAggregate.concurrencyVersion() % snapshotInterval == 0) {
 			snapshotStore.createAndSaveSnapshot(rootAggregate);
 		}
 	}

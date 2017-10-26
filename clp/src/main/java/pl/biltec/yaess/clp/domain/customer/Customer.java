@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
@@ -29,6 +30,7 @@ public class Customer extends RootAggregate {
 	private String name;
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
+
 
 	public Customer(List<Event> events) {
 
@@ -133,15 +135,14 @@ public class Customer extends RootAggregate {
 	@Override
 	public String toString() {
 
-		return "Customer{" +
-			"created=" + created +
-			", deleted=" + deleted +
-			", name='" + name + '\'' +
-			", creationTimestamp=" + creationTimestamp +
-			", lastUpdateTimestamp=" + lastUpdateTimestamp +
-			", rootAggregateId=" + id +
-			", concurrencyVersion=" + concurrencyVersion() +
-			", uncommittedEvents=" + uncommittedEvents +
-			'}';
+		return new ToStringBuilder(this)
+			.append("created", created)
+			.append("deleted", deleted)
+			.append("name", name)
+			.append("creationTimestamp", creationTimestamp)
+			.append("lastUpdateTimestamp", lastUpdateTimestamp)
+			.append("id", id)
+			.append("uncommittedEvents", uncommittedEvents)
+			.toString();
 	}
 }

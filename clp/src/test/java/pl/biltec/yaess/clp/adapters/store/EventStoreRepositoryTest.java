@@ -8,6 +8,7 @@ import org.junit.Test;
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
 import pl.biltec.yaess.core.adapters.store.RepositoryOverEventStore;
+import pl.biltec.yaess.core.adapters.store.memory.InMemorySnapshotStore;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
 import pl.biltec.yaess.core.domain.Repository;
 
@@ -19,9 +20,22 @@ public class EventStoreRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 
-//		customerRepository = new CustomerRepositoryOverEventStore(new InMemoryEventStore());
-		customerRepository = new RepositoryOverEventStore(new InMemoryEventStore(), Customer.class);
+		customerRepository = new RepositoryOverEventStore(new InMemoryEventStore(), new InMemorySnapshotStore(), Customer.class);
 
+	}
+
+	@Test
+	public void shouldCreateAndRecreateFromSnapshot() throws Exception {
+		//given
+		Customer customer = new Customer("Jake");
+		for (int i = 0; i < 60; i++) {
+			customer.rename("rename #" + i);
+			customerRepository.save(customer);
+		}
+		//when
+		Customer recreatedCustomer = customerRepository.get(customer.id());
+		//then
+		Assertions.assertThat(recreatedCustomer).isEqualTo(customer);
 	}
 
 	@Test

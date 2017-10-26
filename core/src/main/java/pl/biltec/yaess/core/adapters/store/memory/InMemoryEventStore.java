@@ -15,6 +15,8 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.gson.Gson;
+
 import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
 import pl.biltec.yaess.core.adapters.store.ExtendedEventSubscriber;
@@ -27,6 +29,7 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 
 public class InMemoryEventStore implements EventStore {
 
+	private Gson gson = new Gson();
 	private List<EventRecord> orderedEvents = Collections.synchronizedList(new LinkedList<>());
 	// TODO [bilu] 25.10.17 subscribers and publishing should not be managed by EventStore
 	private Map<Class<Event>, List<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
@@ -49,7 +52,14 @@ public class InMemoryEventStore implements EventStore {
 		return orderedEvents.stream()
 			.filter(event -> event.getRootAggregateName().equals(rootAggregateClass.getSimpleName().toString()))
 			.filter(event -> event.getRootId().equals(id.toString()))
-			.map(event -> (Event) event.getSerializedEvent());
+			.map(event -> {
+				try {
+					return (Event) gson.fromJson(event.getEventAsJson(), Class.forName(event.getEventClassName()));
+				}
+				catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			});
 	}
 
 	@Override
@@ -109,9 +119,9 @@ public class InMemoryEventStore implements EventStore {
 		return new EventRecord(
 			rootAggregateClass.getSimpleName(),
 			newEvent.rootAggregateId().toString(),
-			newEvent.getClass().getSimpleName(),
+			newEvent.getClass().getName(),
 			newEvent.version(),
-			newEvent,
+			gson.toJson(newEvent),
 			newEvent.created());
 	}
 

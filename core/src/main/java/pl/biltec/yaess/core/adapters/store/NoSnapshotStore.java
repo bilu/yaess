@@ -9,12 +9,6 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 public class NoSnapshotStore implements SnapshotStore {
 
 	@Override
-	public boolean exists(RootAggregateId id) {
-
-		return false;
-	}
-
-	@Override
 	public Optional<? extends RootAggregate> loadSnapshot(RootAggregateId id) {
 
 		return Optional.empty();

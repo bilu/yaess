@@ -8,20 +8,18 @@ class EventRecord {
 	private String rootAggregateName;
 	private String rootId;
 
-	private String eventName;
+	private String eventClassName;
 	private int eventVersion;
-	// TODO [bilu] 22.10.17
-//	private byte[] serializedEvent;
-	private Object serializedEvent;
+	private String eventAsJson;
 	private LocalDateTime eventCreated;
 
-	public EventRecord(String rootAggregateName, String rootId, String eventName, int eventVersion, Object serializedEvent, LocalDateTime eventCreated) {
+	public EventRecord(String rootAggregateName, String rootId, String eventClassName, int eventVersion, String eventAsJson, LocalDateTime eventCreated) {
 
 		this.rootAggregateName = rootAggregateName;
 		this.rootId = rootId;
-		this.eventName = eventName;
+		this.eventClassName = eventClassName;
 		this.eventVersion = eventVersion;
-		this.serializedEvent = serializedEvent;
+		this.eventAsJson = eventAsJson;
 		this.eventCreated = eventCreated;
 	}
 
@@ -35,9 +33,9 @@ class EventRecord {
 		return rootId;
 	}
 
-	public String getEventName() {
+	public String getEventClassName() {
 
-		return eventName;
+		return eventClassName;
 	}
 
 	public int getEventVersion() {
@@ -45,9 +43,9 @@ class EventRecord {
 		return eventVersion;
 	}
 
-	public Object getSerializedEvent() {
+	public String getEventAsJson() {
 
-		return serializedEvent;
+		return eventAsJson;
 	}
 
 	public LocalDateTime getEventCreated() {

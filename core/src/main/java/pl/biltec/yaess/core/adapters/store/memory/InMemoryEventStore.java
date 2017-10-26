@@ -21,6 +21,7 @@ import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
 import pl.biltec.yaess.core.adapters.store.ExtendedEventSubscriber;
 import pl.biltec.yaess.core.common.Contract;
+import pl.biltec.yaess.core.common.Timer;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
 import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregate;
@@ -90,7 +91,8 @@ public class InMemoryEventStore implements EventStore {
 		Contract.notNull(currentConcurrencyVersion, "currentConcurrencyVersion");
 
 		if (exists(id, rootAggregateClass)) {
-			long calculatedConcurrencyVersion = eventStream(id, rootAggregateClass).count();
+//			long calculatedConcurrencyVersion = eventStream(id, rootAggregateClass).count();
+			long calculatedConcurrencyVersion = Timer.count("eventStream(id, rootAggregateClass).count()", () -> eventStream(id, rootAggregateClass).count());
 
 			if (calculatedConcurrencyVersion != (currentConcurrencyVersion - events.size())) {
 				throw new ConcurrentModificationException(id.toString(), currentConcurrencyVersion, calculatedConcurrencyVersion);

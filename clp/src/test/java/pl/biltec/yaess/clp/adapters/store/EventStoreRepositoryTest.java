@@ -28,7 +28,7 @@ public class EventStoreRepositoryTest {
 	public void shouldCreateAndRecreateFromSnapshot() throws Exception {
 		//given
 		Customer customer = new Customer("Jake");
-		for (int i = 0; i < 60; i++) {
+		for (int i = 0; i < 103; i++) {
 			customer.rename("rename #" + i);
 			customerRepository.save(customer);
 		}

@@ -1,8 +1,8 @@
 
 package pl.biltec.yaess.core.adapters.store.memory;
 
-import java.util.HashMap;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class InMemorySnapshotStore implements SnapshotStore {
 	private static final Logger logger = LoggerFactory.getLogger(InMemorySnapshotStore.class);
 	private Gson gson = new Gson();
 	//<rootAggreagateId, json>
-	private HashMap<String, SnapshotRecord> keyValueStore = new HashMap<>();
+	private ConcurrentHashMap<String, SnapshotRecord> keyValueStore = new ConcurrentHashMap<>();
 
 	@Override
 	public Optional<? extends RootAggregate> loadSnapshot(RootAggregateId id) {

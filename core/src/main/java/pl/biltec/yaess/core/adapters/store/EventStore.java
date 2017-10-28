@@ -16,4 +16,8 @@ public interface EventStore {
 	List<Event> loadEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, long skipEvents, long maxCount);
 
 	void appendEvents(RootAggregateId id, Class<? extends RootAggregate> rootAggregateClass, List<Event> events, long currentConcurrencyVersion);
+
+
+	// TODO [bilu] 25.10.17 subscribers and publishing should not be managed by EventStore
+	void addEventSubscriber(EventSubscriber eventSubscriber);
 }

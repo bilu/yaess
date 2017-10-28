@@ -33,7 +33,7 @@ public class CustomerCommandService {
 	public String createCustomer(String customerName, String email) {
 
 		notNull(customerName, "customerName");
-		isTrue(customerRepository.emailOccupied(email), "Email " + email + " already occupied.");
+		isTrue(customerRepository.isEmailUnique(email), "Email " + email + " already occupied");
 		Customer customer = new Customer(customerName, email);
 		// TODO [bilu] 28.10.17  unify type of exceptionc ContractBroken vs DomainOperation
 		if (customerRepository.exists(customer.id())) {

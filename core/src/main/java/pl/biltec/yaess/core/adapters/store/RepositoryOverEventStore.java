@@ -1,5 +1,7 @@
 package pl.biltec.yaess.core.adapters.store;
 
+import static pl.biltec.yaess.core.common.Contract.notNull;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -15,23 +17,22 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 	protected EventStore eventStore;
 	protected SnapshotStore snapshotStore;
+	protected UniqueValuesStore uniqueValuesStore;
 	private Class<ROOT> rootClass;
 	private int snapshotInterval = 5;
 
 	public RepositoryOverEventStore(EventStore eventStore, Class<ROOT> rootClass) {
 
-		this(eventStore, new NoSnapshotStore(), rootClass);
+		this(eventStore, new NoSnapshotStore(), new NoUniqueValuesStore(), rootClass);
 	}
 
-	public RepositoryOverEventStore(EventStore eventStore, SnapshotStore snapshotStore, Class<ROOT> rootClass) {
+	public RepositoryOverEventStore(EventStore eventStore, SnapshotStore snapshotStore, UniqueValuesStore uniqueValuesStore, Class<ROOT> rootClass) {
 
-		Contract.notNull(eventStore, "eventStore");
-		Contract.notNull(snapshotStore, "snapshotStore");
-		Contract.notNull(rootClass, "rootClass");
+		this.eventStore = notNull(eventStore, "eventStore");
+		this.snapshotStore = notNull(snapshotStore, "snapshotStore");
+		this.rootClass = notNull(rootClass, "rootClass");
+		this.uniqueValuesStore = notNull(uniqueValuesStore, "uniqueValuesStore");
 
-		this.eventStore = eventStore;
-		this.snapshotStore = snapshotStore;
-		this.rootClass = rootClass;
 	}
 
 	private ROOT invokeConstructor(Class<ROOT> clazz, List<Event> events) {
@@ -47,7 +48,7 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 	@Override
 	public ROOT get(RootAggregateId id) {
-
+		Contract.notNull(id, "id");
 		return snapshotStore
 			.loadSnapshot(id)
 			.map(rootAggregate -> {
@@ -61,6 +62,7 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 	@Override
 	public void save(ROOT rootAggregate) {
+		Contract.notNull(rootAggregate, "rootAggregate");
 		eventStore.appendEvents(rootAggregate.id(), rootClass, rootAggregate.getUncommittedEvents(), rootAggregate.concurrencyVersion());
 		rootAggregate.clearUncommittedEvents();
 
@@ -73,7 +75,32 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 	@Override
 	public boolean exists(RootAggregateId id) {
-
+		Contract.notNull(id, "id");
 		return eventStore.exists(id, rootClass);
 	}
+
+	/**
+	 * To be used by implementation
+	 */
+	protected boolean isUnique(RootAggregateId rootAggregateId, String attributeName, String attributeValue) {
+
+		return uniqueValuesStore.isUnique(rootClass, rootAggregateId, attributeName, attributeValue);
+	}
+
+	/**
+	 * To be used by implementation
+	 */
+	protected boolean isUnique(String attributeName, String attributeValue) {
+
+		return uniqueValuesStore.isUnique(rootClass, attributeName, attributeValue);
+	}
+
+	/**
+	 * To be used by implementation
+	 */
+	protected void addUnique(RootAggregateId rootAggregateId, String attributeName, String attributeValue) {
+
+		uniqueValuesStore.addUnique(rootClass, rootAggregateId, attributeName, attributeValue);
+	}
+
 }

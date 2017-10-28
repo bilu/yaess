@@ -5,22 +5,24 @@ import org.slf4j.LoggerFactory;
 
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
-import pl.biltec.yaess.core.domain.RootAggregateId;
+import pl.biltec.yaess.core.domain.Event;
 
 
-public class CustomerRenamedEventLogger implements EventSubscriber<RootAggregateId, CustomerRenamedEvent> {
+public class CustomerRenamedEventLogger implements EventSubscriber {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRenamedEventLogger.class);
 
 	@Override
-	public void handleEvent(CustomerRenamedEvent customerRenamedEvent) {
+	public void handleEvent(Event event) {
 
+		CustomerRenamedEvent customerRenamedEvent = (CustomerRenamedEvent) event;
 		logger.info(this.getClass().getSimpleName() + ": " + customerRenamedEvent);
 	}
 
 	@Override
-	public Class<CustomerRenamedEvent> eventType() {
-		// TODO: [pbilewic] 11.10.17 da sie ograc automatem z generyków (pryznajmniej w springu)
-		return CustomerRenamedEvent.class;
+	public boolean supports(Event event) {
+
+		return event.getClass().isInstance(CustomerRenamedEvent.class);
 	}
+
 }

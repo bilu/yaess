@@ -5,21 +5,23 @@ import org.slf4j.LoggerFactory;
 
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
-import pl.biltec.yaess.core.domain.RootAggregateId;
+import pl.biltec.yaess.core.domain.Event;
 
 
-public class CustomerDeletedEmailSender implements EventSubscriber<RootAggregateId, CustomerDeletedEvent> {
+public class CustomerDeletedEmailSender implements EventSubscriber {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerDeletedEmailSender.class);
-	@Override
-	public void handleEvent(CustomerDeletedEvent customerRenamedEvent) {
 
-		logger.info(this.getClass().getSimpleName() + ": " + customerRenamedEvent);
+	@Override
+	public void handleEvent(Event event) {
+
+		CustomerDeletedEvent customerDeletedEvent = (CustomerDeletedEvent) event;
+		logger.info(this.getClass().getSimpleName() + ": " + customerDeletedEvent);
 	}
 
 	@Override
-	public Class<CustomerDeletedEvent> eventType() {
-		// TODO: [pbilewic] 11.10.17 da sie ograc automatem z generyków (pryznajmniej w springu)
-		return CustomerDeletedEvent.class;
+	public boolean supports(Event event) {
+
+		return event.getClass().isInstance(CustomerDeletedEvent.class);
 	}
 }

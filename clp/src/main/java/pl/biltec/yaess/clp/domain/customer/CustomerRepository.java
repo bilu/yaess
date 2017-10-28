@@ -6,7 +6,8 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 
 public interface CustomerRepository extends Repository<Customer> {
 
-	boolean emailOccupied(String email);
-	boolean emailOccupiedByOtherCustomer(RootAggregateId customerId, String email);
+	boolean isEmailUnique(String email);
+
+	boolean isEmailUnique(RootAggregateId rootAggregateId, String email);
 
 }

@@ -1,14 +1,10 @@
 
 package pl.biltec.yaess.core.adapters.store.memory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +15,6 @@ import com.google.gson.Gson;
 
 import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.EventSubscriber;
-import pl.biltec.yaess.core.adapters.store.ExtendedEventSubscriber;
 import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.common.Timer;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
@@ -33,8 +28,7 @@ public class InMemoryEventStore implements EventStore {
 	private Gson gson = new Gson();
 	private List<EventRecord> orderedEvents = Collections.synchronizedList(new LinkedList<>());
 	// TODO [bilu] 25.10.17 subscribers and publishing should not be managed by EventStore
-	private Map<Class<Event>, List<Object>> subscribers = Collections.synchronizedMap(new HashMap<>());
-	private Set<ExtendedEventSubscriber> subscribersExtended = Collections.synchronizedSet(new HashSet<>());
+	private Set<EventSubscriber> subscribers = Collections.synchronizedSet(new HashSet<>());
 	ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	@Override
@@ -91,7 +85,7 @@ public class InMemoryEventStore implements EventStore {
 		Contract.notNull(currentConcurrencyVersion, "currentConcurrencyVersion");
 
 		if (exists(id, rootAggregateClass)) {
-//			long calculatedConcurrencyVersion = eventStream(id, rootAggregateClass).count();
+			//			long calculatedConcurrencyVersion = eventStream(id, rootAggregateClass).count();
 			long calculatedConcurrencyVersion = Timer.count("eventStream(id, rootAggregateClass).count()", () -> eventStream(id, rootAggregateClass).count());
 
 			if (calculatedConcurrencyVersion != (currentConcurrencyVersion - events.size())) {
@@ -110,10 +104,8 @@ public class InMemoryEventStore implements EventStore {
 
 		//async
 		executor.submit(() -> publish(toBePublished));
-		executor.submit(() -> publishExtended(toBePublished));
 		//sync
 		//		publish(toBePublished);
-		//		publishExtended(toBePublished);
 	}
 
 	private EventRecord convertToEventRecord(Event newEvent, Class<? extends RootAggregate> rootAggregateClass) {
@@ -133,41 +125,16 @@ public class InMemoryEventStore implements EventStore {
 			.parallel()
 			.forEach(
 				event -> {
-					List<Object> customerEventSubscribers = subscribers.get(event.getClass());
-					if (customerEventSubscribers != null) {
-						customerEventSubscribers.forEach(subscriber -> ((EventSubscriber) subscriber).handleEvent(event));
-					}
-				}
-			);
-	}
-
-	private void publishExtended(List<Event> toBePublished) {
-
-		toBePublished.stream()
-			.parallel()
-			.forEach(
-				event -> {
-					subscribersExtended.stream()
+					subscribers.stream()
 						.filter(extendedEventSubscriber -> extendedEventSubscriber.supports(event))
 						.forEach(subscriberExtended -> subscriberExtended.handleEvent(event));
 				}
 			);
 	}
 
-	public void addEventSubscriber(EventSubscriber<RootAggregateId, Event> eventSubscriber) {
+	@Override
+	public void addEventSubscriber(EventSubscriber eventSubscriber) {
 
-		// TODO: [pbilewic] 11.10.17 debilne, refaktor
-		List<Object> customerEventSubscribers = subscribers.get(eventSubscriber.eventType());
-		if (customerEventSubscribers == null) {
-			customerEventSubscribers = Arrays.asList(eventSubscriber);
-			subscribers.put(eventSubscriber.eventType(), customerEventSubscribers);
-		}
-		else {
-			customerEventSubscribers = new ArrayList<>(customerEventSubscribers);
-			customerEventSubscribers.add(eventSubscriber);
-			subscribers.put(eventSubscriber.eventType(), customerEventSubscribers);
-		}
-
+		subscribers.add(eventSubscriber);
 	}
-
 }

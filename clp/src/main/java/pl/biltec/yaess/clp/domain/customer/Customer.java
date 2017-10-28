@@ -28,6 +28,7 @@ public class Customer extends RootAggregate {
 	private boolean created;
 	private boolean deleted;
 	private String name;
+	private String email;
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
 
@@ -37,10 +38,12 @@ public class Customer extends RootAggregate {
 		super(events);
 	}
 
-	public Customer(String name) {
+	public Customer(String name, String email) {
+
 		// TODO: [pbilewic] 09.10.17 czy to nie powinien być wyjątek klasy DomainOperationException?
 		Contract.notNull(name, "newName");
-		apply(new CustomerCreatedEvent(new RootAggregateId(), name, LocalDateTime.now()));
+		Contract.notNull(email, "email");
+		apply(new CustomerCreatedEvent(new RootAggregateId(), name, email, LocalDateTime.now()));
 	}
 
 	public void rename(String newName) {
@@ -88,6 +91,7 @@ public class Customer extends RootAggregate {
 
 		this.created = true;
 		this.name = event.getName();
+		this.email = event.getEmail();
 		this.id = event.rootAggregateId();
 		this.creationTimestamp = event.created();
 	}

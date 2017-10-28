@@ -22,11 +22,11 @@ public class CustomerTest {
 	@Test
 	public void shouldCreateCustomer() throws Exception {
 		//given
-		Event event1 = new CustomerCreatedEvent(new RootAggregateId(), "test newName 1", LocalDateTime.now());
+		Event event1 = new CustomerCreatedEvent(new RootAggregateId(), "test newName 1", "test@email.pl", LocalDateTime.now());
 		Event event2 = new CustomerRenamedEvent(new RootAggregateId(), "test newName 2", LocalDateTime.now());
 
 		//when
-		Customer customer = new Customer("test newName 1");
+		Customer customer = new Customer("test newName 1", "test@email.pl");
 		customer.rename("test newName 2");
 
 		//then
@@ -39,7 +39,7 @@ public class CustomerTest {
 	public void shouldRecreateCustomer() throws Exception {
 		//given
 		RootAggregateId RootAggregateId = new RootAggregateId();
-		Event event1 = new CustomerCreatedEvent(RootAggregateId, "test newName 1", LocalDateTime.now());
+		Event event1 = new CustomerCreatedEvent(RootAggregateId, "test newName 1", "test@email.pl", LocalDateTime.now());
 		Event event2 = new CustomerRenamedEvent(RootAggregateId, "test newName 2", LocalDateTime.now());
 		List<Event> customerEvents = Arrays.asList(event1, event2);
 
@@ -56,7 +56,7 @@ public class CustomerTest {
 		//given
 		RootAggregateId RootAggregateId = new RootAggregateId();
 		RootAggregateId RootAggregateId2 = new RootAggregateId();
-		Event event1 = new CustomerCreatedEvent(RootAggregateId, "test newName 1", LocalDateTime.now());
+		Event event1 = new CustomerCreatedEvent(RootAggregateId, "test newName 1", "test@email.pl", LocalDateTime.now());
 		Event event2 = new CustomerRenamedEvent(RootAggregateId2, "test newName 2", LocalDateTime.now());
 		List<Event> customerEvents = Arrays.asList(event1, event2);
 

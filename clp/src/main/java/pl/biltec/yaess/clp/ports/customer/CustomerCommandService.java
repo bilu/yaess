@@ -1,11 +1,13 @@
 package pl.biltec.yaess.clp.ports.customer;
 
+import static pl.biltec.yaess.core.common.Contract.isTrue;
+import static pl.biltec.yaess.core.common.Contract.notNull;
+
 import java.util.function.Consumer;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerAlreadyCreatedException;
-import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
@@ -24,15 +26,16 @@ public class CustomerCommandService {
 
 	public CustomerCommandService(CustomerRepository customerRepository) {
 
-		Contract.notNull(customerRepository, "customerRepository");
+		notNull(customerRepository, "customerRepository");
 		this.customerRepository = customerRepository;
 	}
 
-	public String createCustomer(String customerName) {
+	public String createCustomer(String customerName, String email) {
 
-		Contract.notNull(customerName, "customerName");
-
-		Customer customer = new Customer(customerName);
+		notNull(customerName, "customerName");
+		isTrue(customerRepository.emailOccupied(email), "Email " + email + " already occupied.");
+		Customer customer = new Customer(customerName, email);
+		// TODO [bilu] 28.10.17  unify type of exceptionc ContractBroken vs DomainOperation
 		if (customerRepository.exists(customer.id())) {
 			throw new CustomerAlreadyCreatedException(customer.id());
 		}
@@ -42,7 +45,7 @@ public class CustomerCommandService {
 
 	public void rename(String customerId, String newName) {
 
-		Contract.notNull(newName, "newName");
+		notNull(newName, "newName");
 		action(customerId, customer -> customer.rename(newName));
 	}
 
@@ -53,7 +56,7 @@ public class CustomerCommandService {
 
 	void action(String customerId, Consumer<Customer> action) {
 
-		Contract.notNull(customerId, "customerId");
+		notNull(customerId, "customerId");
 		Customer customer = customerRepository.get(new RootAggregateId(customerId));
 		action.accept(customer);
 		customerRepository.save(customer);

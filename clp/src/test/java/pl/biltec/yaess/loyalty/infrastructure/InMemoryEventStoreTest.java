@@ -54,7 +54,7 @@ public class InMemoryEventStoreTest {
 	public void shouldFindOneEvent() throws Exception {
 		//given
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now())
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now())
 		);
 
 		store.appendEvents(customerId, rootAggregateClass, inputEvents, 0);
@@ -71,7 +71,7 @@ public class InMemoryEventStoreTest {
 	public void shouldFindManyEvents() throws Exception {
 		//given
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now()),
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
@@ -92,7 +92,7 @@ public class InMemoryEventStoreTest {
 		//given
 		CustomerRenamedEvent expectedToBeFound = new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now());
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
 			expectedToBeFound,
 			new CustomerDeletedEvent(customerId, LocalDateTime.now())
@@ -113,7 +113,7 @@ public class InMemoryEventStoreTest {
 	public void shouldNotAllowConcurrentModification() throws Exception {
 		//given
 		List<Event> initialEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
 			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now())
 		);
@@ -143,7 +143,7 @@ public class InMemoryEventStoreTest {
 //	public void shouldInvokeSubscribedObjectsAsync() throws Exception {
 //		//given
 //		List<Event> events = Arrays.asList(
-//			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime.now()),
+//			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime"test@email.pl", .now()),
 //			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
 //			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now()),
 //			new CustomerDeletedEvent(customerId, LocalDateTime.now())

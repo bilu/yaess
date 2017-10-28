@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerAlreadyCreatedException;
+import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
@@ -45,9 +46,16 @@ public class CustomerCommandService {
 
 	public void rename(String customerId, String newName) {
 
-		notNull(newName, "newName");
 		action(customerId, customer -> customer.rename(newName));
 	}
+
+	public void changeEmail(String customerId, String email) {
+
+		Contract.notNull(email, "email");
+		isTrue(customerRepository.isEmailUnique(email), "Email " + email + " already occupied");
+		action(customerId, customer -> customer.changeEmail(email));
+	}
+
 
 	public void delete(String customerId) {
 
@@ -61,6 +69,7 @@ public class CustomerCommandService {
 		action.accept(customer);
 		customerRepository.save(customer);
 	}
+
 
 	// TODO: [pbilewic] 08.10.17 void updateWithSimpleConflictResolution
 

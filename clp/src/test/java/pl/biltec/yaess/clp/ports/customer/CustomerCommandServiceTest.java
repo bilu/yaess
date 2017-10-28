@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerRepositoryOverEventStore;
 import pl.biltec.yaess.clp.domain.customer.Customer;
+import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.SingleEventSubscriber;
@@ -29,19 +30,30 @@ public class CustomerCommandServiceTest {
 		EventStore eventStore = new InMemoryEventStore();
 		SnapshotStore snapshotStore = new InMemorySnapshotStore();
 		UniqueValuesStore uniqueValueStore = new InMemoryUniqueValuesStore();
-		eventStore.addEventSubscriber(emailsUpater(uniqueValueStore));
+		eventStore.addEventSubscriber(emailsCreatedUpdater(uniqueValueStore));
 		customerRepository = new CustomerRepositoryOverEventStore(eventStore, snapshotStore, uniqueValueStore, Customer.class);
 		customerCommandService = new CustomerCommandService(customerRepository);
 
 	}
 
-	private SingleEventSubscriber<CustomerCreatedEvent> emailsUpater(UniqueValuesStore uniqueValueStore) {
+	private SingleEventSubscriber<CustomerCreatedEvent> emailsCreatedUpdater(UniqueValuesStore uniqueValueStore) {
 
 		return new SingleEventSubscriber<CustomerCreatedEvent>(CustomerCreatedEvent.class) {
 
 			@Override
 			public void handle(CustomerCreatedEvent customerCreatedEvent) {
 				uniqueValueStore.addUnique(Customer.class, customerCreatedEvent.rootAggregateId(), "EMAIL", customerCreatedEvent.getEmail());
+			}
+		};
+	}
+
+	private SingleEventSubscriber<CustomerChangedEmailEvent> emailsChangedUpdater(UniqueValuesStore uniqueValueStore) {
+
+		return new SingleEventSubscriber<CustomerChangedEmailEvent>(CustomerChangedEmailEvent.class) {
+
+			@Override
+			public void handle(CustomerChangedEmailEvent customerChangedEmailEvent) {
+				uniqueValueStore.addUnique(Customer.class, customerChangedEmailEvent.rootAggregateId(), "EMAIL", customerChangedEmailEvent.getEmail());
 			}
 		};
 	}
@@ -69,12 +81,12 @@ public class CustomerCommandServiceTest {
 	@Test
 	public void shouldNotAllowToCreateCustomerWithTheSameEmail() throws Exception {
 		//given
-		String customerId = customerCommandService.createCustomer("Abra", "ham@email.pl");
+		customerCommandService.createCustomer("Abra", "ham@email.pl");
 
 		try {
 			//when
 			//awaits for async unique email loads
-			Thread.sleep(500);
+			waitForAsyncUpdateFinish();
 			customerCommandService.createCustomer("Abra", "ham@email.pl");
 			Fail.fail("exception expected");
 		}
@@ -82,6 +94,52 @@ public class CustomerCommandServiceTest {
 			//then
 			Assertions.assertThat(e).hasMessageContaining("ham@email.pl");
 		}
+	}
+
+	@Test
+	public void shouldNotAllowToChangeEmailToExistingOne() throws Exception {
+		//given
+		String customerId = customerCommandService.createCustomer("Abra", "ham@email.pl");
+		String customerId2 = customerCommandService.createCustomer("Abra", "ham_2@email.pl");
+		String customerId3 = customerCommandService.createCustomer("Abra", "ham_3@email.pl");
+		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
+		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
+		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId3))).isTrue();
+
+		try {
+			//when
+			//awaits for async unique email loads
+			waitForAsyncUpdateFinish();
+			customerCommandService.changeEmail(customerId3, "ham@email.pl");
+			Fail.fail("exception expected");
+		}
+		catch (Exception e) {
+			//then
+			Assertions.assertThat(e).hasMessageContaining("ham@email.pl");
+		}
+	}
+
+	@Test
+	public void shouldAllowToChangeEmailToNotExistingOne() throws Exception {
+		//given
+		String customerId = customerCommandService.createCustomer("Abra", "ham@email.pl");
+		String customerId2 = customerCommandService.createCustomer("Abra", "ham_2@email.pl");
+		String customerId3 = customerCommandService.createCustomer("Abra", "ham_3@email.pl");
+		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
+		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
+		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId3))).isTrue();
+
+		//when
+		waitForAsyncUpdateFinish();
+		customerCommandService.changeEmail(customerId3, "ham_4@email.pl");
+
+		//then
+//		no exceptin thrown
+	}
+
+	private void waitForAsyncUpdateFinish() throws InterruptedException {
+
+		Thread.sleep(100);
 	}
 
 }

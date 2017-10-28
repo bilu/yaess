@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
+import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
@@ -24,7 +25,6 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
  */
 public class Customer extends RootAggregate {
 
-	//DOMAIN attributes
 	private boolean created;
 	private boolean deleted;
 	private String name;
@@ -49,22 +49,28 @@ public class Customer extends RootAggregate {
 	public void rename(String newName) {
 
 		Contract.notNull(newName, "newName");
-		// TODO: [pbilewic] 08.10.17 czy tu potrzebuję sprawdzać czy jest utworzony?
-		if (!name.equals(newName)) {
+		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
+		if (!this.name.equals(newName)) {
 			apply(new CustomerRenamedEvent(id, newName, LocalDateTime.now()));
 		}
 	}
+
+	public void changeEmail(String newEmail) {
+		Contract.notNull(newEmail, "newEmail");
+		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
+		if (!this.email.equals(newEmail)) {
+			apply(new CustomerChangedEmailEvent(id, newEmail, LocalDateTime.now()));
+		}
+
+	}
+
 
 	public void delete() {
 
 		if (deleted) {
 			throw new CustomerNotExistsException(id);
 		}
-		//czy powinienem wywołać rename() czy stworzyć event?!
-		LocalDateTime now = LocalDateTime.now();
-		rename(name + "_USUNIĘTY_" + now);
-		deleted = true;
-		apply(new CustomerDeletedEvent(id, now));
+		apply(new CustomerDeletedEvent(id, LocalDateTime.now()));
 	}
 
 	//ES Mutowanie stanu zdarzeniami
@@ -81,10 +87,26 @@ public class Customer extends RootAggregate {
 		else if (event instanceof CustomerRenamedEvent) {
 			mutate((CustomerRenamedEvent) event);
 		}
+		else if (event instanceof CustomerChangedEmailEvent) {
+			mutate((CustomerChangedEmailEvent) event);
+		}
+		else if (event instanceof CustomerDeletedEvent) {
+			mutate((CustomerDeletedEvent) event);
+		}
 		else {
 			throw new UnsupportedEventException(event);
 		}
 		incrementConcurrencyVersion();
+	}
+
+	private void mutate(CustomerDeletedEvent event) {
+		// TODO [bilu] 28.10.17 add originator
+		name = name + "_REMOVED_" + event.created() +"_BY_";
+		deleted = true;
+	}
+
+	private void mutate(CustomerChangedEmailEvent event) {
+		this.email = event.getEmail();
 	}
 
 	private void mutate(CustomerCreatedEvent event) {
@@ -114,10 +136,11 @@ public class Customer extends RootAggregate {
 		Customer customer = (Customer) o;
 
 		return new EqualsBuilder()
-			.appendSuper(super.equals(customer))
+			.appendSuper(super.equals(o))
 			.append(created, customer.created)
 			.append(deleted, customer.deleted)
 			.append(name, customer.name)
+			.append(email, customer.email)
 			.append(creationTimestamp, customer.creationTimestamp)
 			.append(lastUpdateTimestamp, customer.lastUpdateTimestamp)
 			.isEquals();
@@ -131,6 +154,7 @@ public class Customer extends RootAggregate {
 			.append(created)
 			.append(deleted)
 			.append(name)
+			.append(email)
 			.append(creationTimestamp)
 			.append(lastUpdateTimestamp)
 			.toHashCode();
@@ -143,6 +167,7 @@ public class Customer extends RootAggregate {
 			.append("created", created)
 			.append("deleted", deleted)
 			.append("name", name)
+			.append("email", email)
 			.append("creationTimestamp", creationTimestamp)
 			.append("lastUpdateTimestamp", lastUpdateTimestamp)
 			.append("id", id)

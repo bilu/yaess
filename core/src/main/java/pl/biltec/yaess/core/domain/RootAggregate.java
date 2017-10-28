@@ -17,16 +17,18 @@ public abstract class RootAggregate implements Serializable {
 	/**
 	 * Not accessible to edit
 	 */
-	private long concurrencyVersion = 0;
-	protected List<Event> uncommittedEvents = new ArrayList<>();
+	private long concurrencyVersion;
+	protected List<Event> uncommittedEvents;
 
 	public RootAggregate(List<Event> events) {
-
+		this();
 		apply(events);
 	}
 
 	protected RootAggregate() {
 
+		this.concurrencyVersion = 0;
+		this.uncommittedEvents = new ArrayList<>();
 	}
 
 	public RootAggregateId id() {

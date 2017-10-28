@@ -16,7 +16,6 @@ public abstract class Event implements Serializable {
 	protected LocalDateTime created;
 
 
-	//TEST
 	public Event() {
 
 

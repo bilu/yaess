@@ -21,13 +21,9 @@ public class CustomerTest {
 
 	@Test
 	public void shouldCreateCustomer() throws Exception {
-		//given
-		Event event1 = new CustomerCreatedEvent(new RootAggregateId(), "test newName 1", "test@email.pl", LocalDateTime.now(), "admin");
-		Event event2 = new CustomerRenamedEvent(new RootAggregateId(), "test newName 2", LocalDateTime.now(), "admin");
-
 		//when
-		Customer customer = new Customer("test newName 1", "test@email.pl");
-		customer.rename("test newName 2");
+		Customer customer = new Customer("test newName 1", "test@email.pl", "admin");
+		customer.rename("test newName 2", "admin");
 
 		//then
 		Assertions.assertThat(customer).isNotNull();

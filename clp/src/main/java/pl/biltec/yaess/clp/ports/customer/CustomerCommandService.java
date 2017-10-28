@@ -8,7 +8,12 @@ import java.util.function.Consumer;
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerAlreadyCreatedException;
+import pl.biltec.yaess.clp.ports.customer.command.ChangeCustomerEmailCommand;
+import pl.biltec.yaess.clp.ports.customer.command.ChangeCustomerNameCommand;
+import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
+import pl.biltec.yaess.clp.ports.customer.command.DeleteCustomerCommand;
 import pl.biltec.yaess.core.common.Contract;
+import pl.biltec.yaess.core.common.exception.ConditionNotMetException;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
@@ -24,19 +29,22 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 public class CustomerCommandService {
 
 	private CustomerRepository customerRepository;
+	private AuthorizationService authorizationService;
 
-	public CustomerCommandService(CustomerRepository customerRepository) {
+	public CustomerCommandService(CustomerRepository customerRepository, AuthorizationService authorizationService) {
 
-		notNull(customerRepository, "customerRepository");
-		this.customerRepository = customerRepository;
+
+		this.customerRepository = notNull(customerRepository, "customerRepository");
+		this.authorizationService = notNull(authorizationService, "authorizationService");
 	}
 
-	public String createCustomer(String customerName, String email) {
+	public String handle(CreateCustomerCommand command) {
 
-		notNull(customerName, "customerName");
-		isTrue(customerRepository.isEmailUnique(email), "Email " + email + " already occupied");
-		Customer customer = new Customer(customerName, email);
-		// TODO [bilu] 28.10.17  unify type of exceptionc ContractBroken vs DomainOperation
+		notNull(command, "command");
+		checkAuthorization(command);
+		isTrue(customerRepository.isEmailUnique(command.getEmail()), "Email " + command.getEmail() + " already occupied");
+		Customer customer = new Customer(command.getName(), command.getEmail(), command.getOriginator());
+		// TODO [bilu] 28.10.17  unify type of exception ContractBroken vs DomainOperation
 		if (customerRepository.exists(customer.id())) {
 			throw new CustomerAlreadyCreatedException(customer.id());
 		}
@@ -44,32 +52,40 @@ public class CustomerCommandService {
 		return customer.id().toString();
 	}
 
-	public void rename(String customerId, String newName) {
+	public void handle(ChangeCustomerNameCommand command) {
 
-		action(customerId, customer -> customer.rename(newName));
+		action(command, customer -> customer.rename(command.getName(), command.originator));
 	}
 
-	public void changeEmail(String customerId, String email) {
+	public void handle(ChangeCustomerEmailCommand command) {
 
-		Contract.notNull(email, "email");
-		isTrue(customerRepository.isEmailUnique(email), "Email " + email + " already occupied");
-		action(customerId, customer -> customer.changeEmail(email));
+		Contract.notNull(command.getEmail(), "command.getEmail()");
+
+		action(command, customer -> {
+			isTrue(customerRepository.isEmailUnique(customer.id(), command.getEmail()), "Email " + command.getEmail() + " already occupied");
+			customer.changeEmail(command.getEmail(), command.getOriginator());
+		});
 	}
 
+	public void handle(DeleteCustomerCommand command) {
 
-	public void delete(String customerId) {
-
-		action(customerId, customer -> customer.delete());
+		action(command, customer -> customer.delete(command.getOriginator()));
 	}
 
-	void action(String customerId, Consumer<Customer> action) {
+	void action(Command command, Consumer<Customer> action) {
 
-		notNull(customerId, "customerId");
-		Customer customer = customerRepository.get(new RootAggregateId(customerId));
+		checkAuthorization(command);
+		Customer customer = customerRepository.get(new RootAggregateId(command.rootAggregateId));
 		action.accept(customer);
 		customerRepository.save(customer);
 	}
 
+	private void checkAuthorization(Command command) {
+
+		Contract.isTrue(
+			authorizationService.isAllowedToInvokeCommand(command),
+			() -> new ConditionNotMetException("User " + command.originator + " is not allowed to perform " + command));
+	}
 
 	// TODO: [pbilewic] 08.10.17 void updateWithSimpleConflictResolution
 

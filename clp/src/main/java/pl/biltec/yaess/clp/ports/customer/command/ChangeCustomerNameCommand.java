@@ -1,25 +1,20 @@
-package pl.biltec.yaess.clp.domain.event;
-
-import java.time.LocalDateTime;
+package pl.biltec.yaess.clp.ports.customer.command;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import pl.biltec.yaess.core.domain.Event;
-import pl.biltec.yaess.core.domain.RootAggregateId;
+import pl.biltec.yaess.clp.ports.customer.Command;
 
 
-public class CustomerCreatedEvent extends Event {
+public class ChangeCustomerNameCommand extends Command {
 
 	private String name;
-	private String email;
 
-	public CustomerCreatedEvent(RootAggregateId id, String name, String email, LocalDateTime created, String originator) {
+	public ChangeCustomerNameCommand(String customerId, String originator, String name) {
 
-		super(id, created, originator);
+		super(originator, customerId);
 		this.name = name;
-		this.email = email;
 	}
 
 	public String getName() {
@@ -27,10 +22,6 @@ public class CustomerCreatedEvent extends Event {
 		return name;
 	}
 
-	public String getEmail() {
-
-		return email;
-	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -38,15 +29,14 @@ public class CustomerCreatedEvent extends Event {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerCreatedEvent))
+		if (!(o instanceof ChangeCustomerNameCommand))
 			return false;
 
-		CustomerCreatedEvent that = (CustomerCreatedEvent) o;
+		ChangeCustomerNameCommand that = (ChangeCustomerNameCommand) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
 			.append(name, that.name)
-			.append(email, that.email)
 			.isEquals();
 	}
 
@@ -56,7 +46,6 @@ public class CustomerCreatedEvent extends Event {
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
 			.append(name)
-			.append(email)
 			.toHashCode();
 	}
 
@@ -65,11 +54,8 @@ public class CustomerCreatedEvent extends Event {
 
 		return new ToStringBuilder(this)
 			.append("name", name)
-			.append("email", email)
+			.append("originator", originator)
 			.append("customerId", rootAggregateId)
-			.append("eventID", eventID)
-			.append("version", version)
-			.append("created", created)
 			.toString();
 	}
 }

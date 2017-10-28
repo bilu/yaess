@@ -1,21 +1,19 @@
-package pl.biltec.yaess.clp.domain.event;
-
-import java.time.LocalDateTime;
+package pl.biltec.yaess.clp.ports.customer.command;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import pl.biltec.yaess.core.domain.Event;
-import pl.biltec.yaess.core.domain.RootAggregateId;
+import pl.biltec.yaess.clp.ports.customer.Command;
 
 
-public class CustomerChangedEmailEvent extends Event{
+public class ChangeCustomerEmailCommand extends Command {
 
 	private String email;
 
-	public CustomerChangedEmailEvent(RootAggregateId id, String email, LocalDateTime now, String originator) {
-		super(id, now, originator);
+	public ChangeCustomerEmailCommand(String customerId, String originator, String email) {
+
+		super(originator, customerId);
 		this.email = email;
 	}
 
@@ -30,10 +28,10 @@ public class CustomerChangedEmailEvent extends Event{
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerChangedEmailEvent))
+		if (!(o instanceof ChangeCustomerEmailCommand))
 			return false;
 
-		CustomerChangedEmailEvent that = (CustomerChangedEmailEvent) o;
+		ChangeCustomerEmailCommand that = (ChangeCustomerEmailCommand) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
@@ -55,10 +53,8 @@ public class CustomerChangedEmailEvent extends Event{
 
 		return new ToStringBuilder(this)
 			.append("email", email)
+			.append("originator", originator)
 			.append("customerId", rootAggregateId)
-			.append("eventID", eventID)
-			.append("version", version)
-			.append("created", created)
 			.toString();
 	}
 }

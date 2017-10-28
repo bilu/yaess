@@ -8,6 +8,7 @@ public interface CustomerRepository extends Repository<Customer> {
 
 	boolean isEmailUnique(String email);
 
+	// TODO [bilu] 28.10.17 is it really necessary in ES world
 	boolean isEmailUnique(RootAggregateId rootAggregateId, String email);
 
 }

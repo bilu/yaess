@@ -32,45 +32,48 @@ public class Customer extends RootAggregate {
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
 
-
 	public Customer(List<Event> events) {
 
 		super(events);
 	}
 
-	public Customer(String name, String email) {
+	public Customer(String name, String email, String originator) {
 
 		// TODO: [pbilewic] 09.10.17 czy to nie powinien być wyjątek klasy DomainOperationException?
+		Contract.notNull(originator, "originator");
 		Contract.notNull(name, "newName");
 		Contract.notNull(email, "email");
-		apply(new CustomerCreatedEvent(new RootAggregateId(), name, email, LocalDateTime.now(), "admin"));
+		apply(new CustomerCreatedEvent(new RootAggregateId(), name, email, LocalDateTime.now(), originator));
 	}
 
-	public void rename(String newName) {
+	public void rename(String newName, String originator) {
 
+		Contract.notNull(originator, "originator");
 		Contract.notNull(newName, "newName");
 		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
 		if (!this.name.equals(newName)) {
-			apply(new CustomerRenamedEvent(id, newName, LocalDateTime.now(), "admin"));
+			apply(new CustomerRenamedEvent(id, newName, LocalDateTime.now(), originator));
 		}
 	}
 
-	public void changeEmail(String newEmail) {
+	public void changeEmail(String newEmail, String originator) {
+
+		Contract.notNull(originator, "originator");
 		Contract.notNull(newEmail, "newEmail");
 		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
 		if (!this.email.equals(newEmail)) {
-			apply(new CustomerChangedEmailEvent(id, newEmail, LocalDateTime.now(), "admin"));
+			apply(new CustomerChangedEmailEvent(id, newEmail, LocalDateTime.now(), originator));
 		}
 
 	}
 
+	public void delete(String originator) {
 
-	public void delete() {
-
+		Contract.notNull(originator, "originator");
 		if (deleted) {
 			throw new CustomerNotExistsException(id);
 		}
-		apply(new CustomerDeletedEvent(id, LocalDateTime.now(), "admin"));
+		apply(new CustomerDeletedEvent(id, LocalDateTime.now(), originator));
 	}
 
 	//ES Mutowanie stanu zdarzeniami
@@ -101,11 +104,12 @@ public class Customer extends RootAggregate {
 
 	private void mutate(CustomerDeletedEvent event) {
 		// TODO [bilu] 28.10.17 add originator
-		name = name + "_REMOVED_" + event.created() +"_BY_";
+		name = name + "_REMOVED_" + event.created() + "_BY_" + event.originator();
 		deleted = true;
 	}
 
 	private void mutate(CustomerChangedEmailEvent event) {
+
 		this.email = event.getEmail();
 	}
 

@@ -17,7 +17,7 @@ public class GsonTest {
 	@Test
 	public void shouldGsonSerializeAndDeserializeCustomer() throws Exception {
 		//given
-		Customer customer = new Customer("zenek", "test@email.pl");
+		Customer customer = new Customer("zenek", "test@email.pl", "admin");
 		customer.clearUncommittedEvents();
 		String json = new Gson().toJson(customer);
 

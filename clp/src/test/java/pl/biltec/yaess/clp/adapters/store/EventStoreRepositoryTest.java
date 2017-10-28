@@ -28,9 +28,9 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldCreateAndRecreateFromSnapshot() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl");
+		Customer customer = new Customer("Jake", "test@email.pl", "admin");
 		for (int i = 0; i < 103; i++) {
-			customer.rename("rename #" + i);
+			customer.rename("handle #" + i, "admin");
 			customerRepository.save(customer);
 		}
 		//when
@@ -43,9 +43,9 @@ public class EventStoreRepositoryTest {
 	public void shouldSavedCustomerRemainTheSameAfterGetFromStore() throws Exception {
 
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl");
-		customer.rename("Johhhny");
-		customer.rename("Bob");
+		Customer customer = new Customer("Jake", "test@email.pl", "admin");
+		customer.rename("Johhhny", "admin");
+		customer.rename("Bob", "admin");
 		customerRepository.save(customer);
 
 		//when
@@ -60,7 +60,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenNoModificationMadeBeAllowed() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl");
+		Customer customer = new Customer("Jake", "test@email.pl", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());
@@ -76,13 +76,13 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenModificationMadeThrowException() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl");
+		Customer customer = new Customer("Jake", "test@email.pl", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());
 
 		//when
-		concurrentCustomer1.rename("Jake2");
+		concurrentCustomer1.rename("Jake2", "admin");
 		customerRepository.save(concurrentCustomer1);
 
 		try {

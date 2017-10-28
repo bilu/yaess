@@ -20,6 +20,7 @@ import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
+import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
 import pl.biltec.yaess.core.domain.Event;
@@ -32,8 +33,7 @@ public class InMemoryEventStoreTest {
 
 	private RootAggregateId customerId;
 	private Class<Customer> rootAggregateClass;
-	private InMemoryEventStore store;
-//	private EventStore store;
+	private EventStore store;
 
 	@Before
 	public void setUp() throws Exception {

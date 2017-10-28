@@ -14,9 +14,9 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 public class CustomerHasDiedEvent extends Event {
 
 
-	public CustomerHasDiedEvent(RootAggregateId id, LocalDateTime timestamp) {
+	public CustomerHasDiedEvent(RootAggregateId id, LocalDateTime timestamp, String originator) {
 
-		super(id, timestamp);
+		super(id, timestamp, originator);
 	}
 
 

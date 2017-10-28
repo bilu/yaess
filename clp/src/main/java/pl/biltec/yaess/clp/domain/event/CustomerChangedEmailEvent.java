@@ -14,8 +14,8 @@ public class CustomerChangedEmailEvent extends Event{
 
 	private String email;
 
-	public CustomerChangedEmailEvent(RootAggregateId id, String email, LocalDateTime now) {
-		super(id, now);
+	public CustomerChangedEmailEvent(RootAggregateId id, String email, LocalDateTime now, String originator) {
+		super(id, now, originator);
 		this.email = email;
 	}
 

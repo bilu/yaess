@@ -11,9 +11,9 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 public class CustomerDeletedEvent extends Event {
 
 
-	public CustomerDeletedEvent(RootAggregateId id, LocalDateTime timestamp) {
+	public CustomerDeletedEvent(RootAggregateId id, LocalDateTime timestamp, String originator) {
 
-		super(id, timestamp);
+		super(id, timestamp, originator);
 	}
 
 	@Override

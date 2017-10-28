@@ -43,7 +43,7 @@ public class Customer extends RootAggregate {
 		// TODO: [pbilewic] 09.10.17 czy to nie powinien być wyjątek klasy DomainOperationException?
 		Contract.notNull(name, "newName");
 		Contract.notNull(email, "email");
-		apply(new CustomerCreatedEvent(new RootAggregateId(), name, email, LocalDateTime.now()));
+		apply(new CustomerCreatedEvent(new RootAggregateId(), name, email, LocalDateTime.now(), "admin"));
 	}
 
 	public void rename(String newName) {
@@ -51,7 +51,7 @@ public class Customer extends RootAggregate {
 		Contract.notNull(newName, "newName");
 		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
 		if (!this.name.equals(newName)) {
-			apply(new CustomerRenamedEvent(id, newName, LocalDateTime.now()));
+			apply(new CustomerRenamedEvent(id, newName, LocalDateTime.now(), "admin"));
 		}
 	}
 
@@ -59,7 +59,7 @@ public class Customer extends RootAggregate {
 		Contract.notNull(newEmail, "newEmail");
 		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
 		if (!this.email.equals(newEmail)) {
-			apply(new CustomerChangedEmailEvent(id, newEmail, LocalDateTime.now()));
+			apply(new CustomerChangedEmailEvent(id, newEmail, LocalDateTime.now(), "admin"));
 		}
 
 	}
@@ -70,7 +70,7 @@ public class Customer extends RootAggregate {
 		if (deleted) {
 			throw new CustomerNotExistsException(id);
 		}
-		apply(new CustomerDeletedEvent(id, LocalDateTime.now()));
+		apply(new CustomerDeletedEvent(id, LocalDateTime.now(), "admin"));
 	}
 
 	//ES Mutowanie stanu zdarzeniami

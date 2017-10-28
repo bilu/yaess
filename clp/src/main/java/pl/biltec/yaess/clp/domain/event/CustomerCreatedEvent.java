@@ -15,9 +15,9 @@ public class CustomerCreatedEvent extends Event {
 	private String name;
 	private String email;
 
-	public CustomerCreatedEvent(RootAggregateId id, String name, String email, LocalDateTime created) {
+	public CustomerCreatedEvent(RootAggregateId id, String name, String email, LocalDateTime created, String originator) {
 
-		super(id, created);
+		super(id, created, originator);
 		this.name = name;
 		this.email = email;
 	}

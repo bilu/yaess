@@ -14,9 +14,9 @@ public class CustomerRenamedEvent extends Event {
 
 	private String newName;
 
-	public CustomerRenamedEvent(RootAggregateId id, String newName, LocalDateTime timestamp) {
+	public CustomerRenamedEvent(RootAggregateId id, String newName, LocalDateTime timestamp, String originator) {
 
-		super(id, timestamp);
+		super(id, timestamp, originator);
 		this.newName = newName;
 	}
 

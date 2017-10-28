@@ -8,10 +8,14 @@ import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pl.biltec.yaess.clp.adapters.AllCustomerEventsLogger;
+import pl.biltec.yaess.clp.adapters.CustomerDeletedEmailSender;
+import pl.biltec.yaess.clp.adapters.CustomerRenamedEventLogger;
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
@@ -54,7 +58,7 @@ public class InMemoryEventStoreTest {
 	public void shouldFindOneEvent() throws Exception {
 		//given
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now())
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin")
 		);
 
 		store.appendEvents(customerId, rootAggregateClass, inputEvents, 0);
@@ -71,10 +75,10 @@ public class InMemoryEventStoreTest {
 	public void shouldFindManyEvents() throws Exception {
 		//given
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now()),
-			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
-			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now()),
-			new CustomerDeletedEvent(customerId, LocalDateTime.now())
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin"),
+			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")
 		);
 
 		store.appendEvents(customerId, rootAggregateClass, inputEvents, 0);
@@ -90,12 +94,12 @@ public class InMemoryEventStoreTest {
 	@Test
 	public void shouldFindPartOfEventsEvents() throws Exception {
 		//given
-		CustomerRenamedEvent expectedToBeFound = new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now());
+		CustomerRenamedEvent expectedToBeFound = new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin");
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now()),
-			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
 			expectedToBeFound,
-			new CustomerDeletedEvent(customerId, LocalDateTime.now())
+			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")
 		);
 
 		store.appendEvents(customerId, rootAggregateClass, inputEvents, 0);
@@ -113,12 +117,12 @@ public class InMemoryEventStoreTest {
 	public void shouldNotAllowConcurrentModification() throws Exception {
 		//given
 		List<Event> initialEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now()),
-			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
-			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now())
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin")
 		);
 		List<Event> anotherEvents = Arrays.asList(
-			new CustomerDeletedEvent(customerId, LocalDateTime.now())
+			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")
 		);
 
 		store.appendEvents(customerId, rootAggregateClass, initialEvents, 0);
@@ -138,28 +142,27 @@ public class InMemoryEventStoreTest {
 		}
 	}
 
-//	@Test
-//	@Ignore("Manual test due to async call verification")
-//	public void shouldInvokeSubscribedObjectsAsync() throws Exception {
-//		//given
-//		List<Event> events = Arrays.asList(
-//			new CustomerCreatedEvent(customerId, "startowy", LocalDateTime"test@email.pl", .now()),
-//			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now()),
-//			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now()),
-//			new CustomerDeletedEvent(customerId, LocalDateTime.now())
-//		);
-//
-//		store.addEventSubscriber(new CustomerRenamedEventLogger());
-//		store.addEventSubscriber(new CustomerRenamedEventLogger2());
-//		store.addEventSubscriber(new AllCustomerEventsLogger());
-//		store.addEventSubscriber(new CustomerDeletedEmailSender());
-//
-//		//when
-//		store.appendEvents(customerId.toString(), rootAggregateClass, events, 0);
-//
-//		//then
-//		logger.info("Finished");
-//		Thread.sleep(1000);
-//
-//	}
+	@Test
+	@Ignore("Manual test due to async call verification")
+	public void shouldInvokeSubscribedObjectsAsync() throws Exception {
+		//given
+		List<Event> events = Arrays.asList(
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
+			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin"),
+			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")
+		);
+
+		store.addEventSubscriber(new CustomerRenamedEventLogger());
+		store.addEventSubscriber(new AllCustomerEventsLogger());
+		store.addEventSubscriber(new CustomerDeletedEmailSender());
+
+		//when
+		store.appendEvents(customerId, rootAggregateClass, events, 0);
+
+		//then
+		logger.info("Finished");
+		Thread.sleep(1000);
+
+	}
 }

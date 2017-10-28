@@ -1,5 +1,7 @@
 package pl.biltec.yaess.core.domain;
 
+import static pl.biltec.yaess.core.common.Contract.notNull;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,18 +16,18 @@ public abstract class Event implements Serializable {
 	protected UUID eventID;
 	protected int version;
 	protected LocalDateTime created;
-
+	protected String originator;
 
 	public Event() {
 
 
 	}
 
+	protected Event(RootAggregateId rootAggregateId, LocalDateTime created, String originator) {
 
-	protected Event(RootAggregateId rootAggregateId, LocalDateTime created) {
-
-		this.rootAggregateId = rootAggregateId;
-		this.created = created;
+		this.rootAggregateId = notNull(rootAggregateId, "rootAggregateId");;
+		this.created = notNull(created, "created");
+		this.originator = notNull(originator, "originator");
 		this.eventID = UUID.randomUUID();
 		this.version = 1;
 	}
@@ -50,6 +52,11 @@ public abstract class Event implements Serializable {
 		return eventID.toString();
 	}
 
+	public String originator() {
+
+		return originator;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 
@@ -66,6 +73,7 @@ public abstract class Event implements Serializable {
 			.append(rootAggregateId, event.rootAggregateId)
 			.append(eventID, event.eventID)
 			.append(created, event.created)
+			.append(originator, event.originator)
 			.isEquals();
 	}
 
@@ -84,6 +92,7 @@ public abstract class Event implements Serializable {
 			.append(eventID)
 			.append(version)
 			.append(created)
+			.append(originator)
 			.toHashCode();
 	}
 }

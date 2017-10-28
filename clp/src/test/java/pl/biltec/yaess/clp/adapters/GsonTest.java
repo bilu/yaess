@@ -33,7 +33,7 @@ public class GsonTest {
 	@Test
 	public void shouldGsonSerializeAndDeserializeEvent() throws Exception {
 		//given
-		CustomerRenamedEvent event = new CustomerRenamedEvent(new RootAggregateId(), "krz", LocalDateTime.now());
+		CustomerRenamedEvent event = new CustomerRenamedEvent(new RootAggregateId(), "krz", LocalDateTime.now(), "admin");
 		String json = new Gson().toJson(event);
 
 

@@ -13,16 +13,11 @@ import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.common.Contract;
-import pl.biltec.yaess.core.common.exception.UnsupportedEventException;
 import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregate;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-/**
- * Jeśli nie chcemy trzymać oddzielnie stanu oraz metod biznesowych Customera to należy pamiętać aby tylko zdarzenia (metody apply) mutowały stan.
- * Nie mutujemy stanu z poziomu metod biznesowych bo wystąpi problem przy odtwarzaniu.
- */
 public class Customer extends RootAggregate {
 
 	private boolean created;
@@ -37,6 +32,7 @@ public class Customer extends RootAggregate {
 		super(events);
 	}
 
+	//BUSINESS METHODS
 	public Customer(String name, String email, String originator) {
 
 		// TODO: [pbilewic] 09.10.17 czy to nie powinien być wyjątek klasy DomainOperationException?
@@ -76,34 +72,8 @@ public class Customer extends RootAggregate {
 		apply(new CustomerDeletedEvent(id, LocalDateTime.now(), originator));
 	}
 
-	//ES Mutowanie stanu zdarzeniami
-	protected void mutateState(Event event) {
-
-		//tego będzie dużo??
-		//     https://stackoverflow.com/questions/3935832/java-equivalent-to-c-sharp-dynamic-class-type
-
-		// TODO: [pbilewic] 08.10.17 magic
-		//		https://stackoverflow.com/questions/3935832/java-equivalent-to-c-sharp-dynamic-class-type
-		if (event instanceof CustomerCreatedEvent) {
-			mutate((CustomerCreatedEvent) event);
-		}
-		else if (event instanceof CustomerRenamedEvent) {
-			mutate((CustomerRenamedEvent) event);
-		}
-		else if (event instanceof CustomerChangedEmailEvent) {
-			mutate((CustomerChangedEmailEvent) event);
-		}
-		else if (event instanceof CustomerDeletedEvent) {
-			mutate((CustomerDeletedEvent) event);
-		}
-		else {
-			throw new UnsupportedEventException(event);
-		}
-		incrementConcurrencyVersion();
-	}
-
+	//MUTATE AGGREGATE STATE
 	private void mutate(CustomerDeletedEvent event) {
-		// TODO [bilu] 28.10.17 add originator
 		name = name + "_REMOVED_" + event.created() + "_BY_" + event.originator();
 		deleted = true;
 	}
@@ -175,7 +145,8 @@ public class Customer extends RootAggregate {
 			.append("creationTimestamp", creationTimestamp)
 			.append("lastUpdateTimestamp", lastUpdateTimestamp)
 			.append("id", id)
-			.append("uncommittedEvents", uncommittedEvents)
+			.append("uncommittedEvents", getUncommittedEvents())
+			.append("concurrencyVersion", concurrencyVersion())
 			.toString();
 	}
 }

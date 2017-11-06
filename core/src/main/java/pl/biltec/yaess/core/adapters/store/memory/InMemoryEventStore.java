@@ -133,8 +133,9 @@ public class InMemoryEventStore implements EventStore {
 	}
 
 	@Override
-	public void addEventSubscriber(EventSubscriber eventSubscriber) {
+	public EventStore addEventSubscriber(EventSubscriber eventSubscriber) {
 
 		subscribers.add(eventSubscriber);
+		return this;
 	}
 }

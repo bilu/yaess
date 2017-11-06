@@ -141,7 +141,7 @@ public class CustomerCommandServiceTest {
 		String customerId = UUID.randomUUID().toString();
 		String customerId2 = UUID.randomUUID().toString();
 		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		customerCommandService.handle(new ChangeCustomerEmailCommand(customerId2, "admin", "ham_3@email.pl"));

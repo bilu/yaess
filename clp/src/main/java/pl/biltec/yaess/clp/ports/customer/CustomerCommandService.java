@@ -43,7 +43,7 @@ public class CustomerCommandService {
 		notNull(command, "command");
 		checkAuthorization(command);
 		isTrue(customerRepository.isEmailUnique(command.getEmail()), "Email " + command.getEmail() + " already occupied");
-		Customer customer = new Customer(command.getName(), command.getEmail(), command.getOriginator());
+		Customer customer = new Customer(command.getName(), command.getEmail(), command.getPersonalIdNumber(), command.getOriginator());
 		// TODO [bilu] 28.10.17  unify type of exception ContractBroken vs DomainOperation
 		if (customerRepository.exists(customer.id())) {
 			throw new CustomerAlreadyCreatedException(customer.id());

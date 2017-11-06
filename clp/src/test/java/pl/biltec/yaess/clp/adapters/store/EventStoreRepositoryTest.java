@@ -28,7 +28,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldCreateAndRecreateFromSnapshot() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "admin");
+		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
 		for (int i = 0; i < 103; i++) {
 			customer.rename("handle #" + i, "admin");
 			customerRepository.save(customer);
@@ -43,7 +43,7 @@ public class EventStoreRepositoryTest {
 	public void shouldSavedCustomerRemainTheSameAfterGetFromStore() throws Exception {
 
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "admin");
+		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
 		customer.rename("Johhhny", "admin");
 		customer.rename("Bob", "admin");
 		customerRepository.save(customer);
@@ -60,7 +60,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenNoModificationMadeBeAllowed() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "admin");
+		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());
@@ -76,7 +76,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenModificationMadeThrowException() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "admin");
+		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());

@@ -11,12 +11,14 @@ public class CreateCustomerCommand extends Command {
 
 	private String name;
 	private String email;
+	private String personalIdNumber;
 
-	public CreateCustomerCommand(String originator, String name, String email) {
+	public CreateCustomerCommand(String originator, String name, String email, String personalIdNumber) {
 
 		super(originator, "notrelevantduringcustomercreation");
 		this.name = name;
 		this.email = email;
+		this.personalIdNumber = personalIdNumber;
 	}
 
 	public String getName() {
@@ -27,6 +29,11 @@ public class CreateCustomerCommand extends Command {
 	public String getEmail() {
 
 		return email;
+	}
+
+	public String getPersonalIdNumber() {
+
+		return personalIdNumber;
 	}
 
 	@Override
@@ -44,6 +51,7 @@ public class CreateCustomerCommand extends Command {
 			.appendSuper(super.equals(o))
 			.append(name, that.name)
 			.append(email, that.email)
+			.append(personalIdNumber, that.personalIdNumber)
 			.isEquals();
 	}
 
@@ -54,6 +62,7 @@ public class CreateCustomerCommand extends Command {
 			.appendSuper(super.hashCode())
 			.append(name)
 			.append(email)
+			.append(personalIdNumber)
 			.toHashCode();
 	}
 
@@ -63,8 +72,9 @@ public class CreateCustomerCommand extends Command {
 		return new ToStringBuilder(this)
 			.append("name", name)
 			.append("email", email)
+			.append("personalIdNumber", personalIdNumber)
 			.append("originator", originator)
-			.append("customerId", rootAggregateId)
+			.append("rootAggregateId", rootAggregateId)
 			.toString();
 	}
 }

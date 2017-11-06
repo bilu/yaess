@@ -58,7 +58,7 @@ public class InMemoryEventStoreTest {
 	public void shouldFindOneEvent() throws Exception {
 		//given
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin")
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", "80112233445", LocalDateTime.now(), "admin")
 		);
 
 		store.appendEvents(customerId, rootAggregateClass, inputEvents, 0);
@@ -75,7 +75,7 @@ public class InMemoryEventStoreTest {
 	public void shouldFindManyEvents() throws Exception {
 		//given
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", "88112233445", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin"),
 			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")
@@ -96,7 +96,7 @@ public class InMemoryEventStoreTest {
 		//given
 		CustomerRenamedEvent expectedToBeFound = new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin");
 		List<Event> inputEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", "88112233445", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
 			expectedToBeFound,
 			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")
@@ -117,7 +117,7 @@ public class InMemoryEventStoreTest {
 	public void shouldNotAllowConcurrentModification() throws Exception {
 		//given
 		List<Event> initialEvents = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", "88112233445", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin")
 		);
@@ -147,7 +147,7 @@ public class InMemoryEventStoreTest {
 	public void shouldInvokeSubscribedObjectsAsync() throws Exception {
 		//given
 		List<Event> events = Arrays.asList(
-			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", LocalDateTime.now(), "admin"),
+			new CustomerCreatedEvent(customerId, "startowy", "test@email.pl", "88112233445", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana1", LocalDateTime.now(), "admin"),
 			new CustomerRenamedEvent(customerId, "zmiana2", LocalDateTime.now(), "admin"),
 			new CustomerDeletedEvent(customerId, LocalDateTime.now(), "admin")

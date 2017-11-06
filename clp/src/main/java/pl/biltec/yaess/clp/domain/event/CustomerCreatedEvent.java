@@ -14,12 +14,14 @@ public class CustomerCreatedEvent extends Event {
 
 	private String name;
 	private String email;
+	private String personalIdNumber;
 
-	public CustomerCreatedEvent(RootAggregateId id, String name, String email, LocalDateTime created, String originator) {
+	public CustomerCreatedEvent(RootAggregateId id, String name, String email, String personalIdNumber, LocalDateTime created, String originator) {
 
 		super(id, created, originator);
 		this.name = name;
 		this.email = email;
+		this.personalIdNumber = personalIdNumber;
 	}
 
 	public String getName() {
@@ -30,6 +32,11 @@ public class CustomerCreatedEvent extends Event {
 	public String getEmail() {
 
 		return email;
+	}
+
+	public String getPersonalIdNumber() {
+
+		return personalIdNumber;
 	}
 
 	@Override
@@ -47,6 +54,7 @@ public class CustomerCreatedEvent extends Event {
 			.appendSuper(super.equals(o))
 			.append(name, that.name)
 			.append(email, that.email)
+			.append(personalIdNumber, that.personalIdNumber)
 			.isEquals();
 	}
 
@@ -57,6 +65,7 @@ public class CustomerCreatedEvent extends Event {
 			.appendSuper(super.hashCode())
 			.append(name)
 			.append(email)
+			.append(personalIdNumber)
 			.toHashCode();
 	}
 
@@ -66,10 +75,12 @@ public class CustomerCreatedEvent extends Event {
 		return new ToStringBuilder(this)
 			.append("name", name)
 			.append("email", email)
-			.append("customerId", rootAggregateId)
+			.append("personalIdNumber", personalIdNumber)
+			.append("rootAggregateId", rootAggregateId)
 			.append("eventID", eventID)
 			.append("version", version)
 			.append("created", created)
+			.append("originator", originator)
 			.toString();
 	}
 }

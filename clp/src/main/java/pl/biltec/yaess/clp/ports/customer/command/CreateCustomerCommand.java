@@ -13,9 +13,9 @@ public class CreateCustomerCommand extends Command {
 	private String email;
 	private String personalIdNumber;
 
-	public CreateCustomerCommand(String originator, String name, String email, String personalIdNumber) {
+	public CreateCustomerCommand(String customerId, String originator, String name, String email, String personalIdNumber) {
 
-		super(originator, "notrelevantduringcustomercreation");
+		super(originator, customerId);
 		this.name = name;
 		this.email = email;
 		this.personalIdNumber = personalIdNumber;

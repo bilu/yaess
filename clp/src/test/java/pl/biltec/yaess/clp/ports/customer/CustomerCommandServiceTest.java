@@ -1,5 +1,7 @@
 package pl.biltec.yaess.clp.ports.customer;
 
+import java.util.UUID;
+
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
 import org.junit.Before;
@@ -21,7 +23,7 @@ import pl.biltec.yaess.core.adapters.store.memory.InMemoryUniqueValuesStore;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CommandServiceTest {
+public class CustomerCommandServiceTest {
 
 	private CustomerCommandService customerCommandService;
 	private CustomerRepositoryOverEventStore customerRepository;
@@ -67,7 +69,8 @@ public class CommandServiceTest {
 	@Test
 	public void shouldCreateCustomer() throws Exception {
 		//when
-		String customerId = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
+		String customerId = UUID.randomUUID().toString();
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
 
 		//then
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
@@ -76,8 +79,10 @@ public class CommandServiceTest {
 	@Test
 	public void shouldCreateTwoCustomers() throws Exception {
 		//when
-		String customerId = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
-		String customerId2 = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham_2@email.pl", "77112233445"));
+		String customerId = UUID.randomUUID().toString();
+		String customerId2 = UUID.randomUUID().toString();
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
 
 		//then
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
@@ -87,13 +92,15 @@ public class CommandServiceTest {
 	@Test
 	public void shouldNotAllowToCreateCustomerWithTheSameEmail() throws Exception {
 		//given
-		customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
+		String customerId = UUID.randomUUID().toString();
+		String customerId2 = UUID.randomUUID().toString();
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
 
 		try {
 			//when
 			//awaits for async unique email loads
 			waitForAsyncUpdateFinish();
-			customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
+			customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham@email.pl", "77112233445"));
 			Fail.fail("exception expected");
 		}
 		catch (Exception e) {
@@ -105,9 +112,12 @@ public class CommandServiceTest {
 	@Test
 	public void shouldNotAllowToChangeEmailToExistingOne() throws Exception {
 		//given
-		String customerId = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
-		String customerId2 = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham_2@email.pl", "77112233445"));
-		String customerId3 = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham_3@email.pl", "77112233445"));
+		String customerId = UUID.randomUUID().toString();
+		String customerId2 = UUID.randomUUID().toString();
+		String customerId3 = UUID.randomUUID().toString();
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId3, "admin", "Abra", "ham_3@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId3))).isTrue();
@@ -128,8 +138,10 @@ public class CommandServiceTest {
 	@Test
 	public void shouldNotAllowToChangeEmailToExistingOneWithMultipleEmailChange() throws Exception {
 		//given
-		String customerId = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
-		String customerId2 = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham_2@email.pl", "77112233445"));
+		String customerId = UUID.randomUUID().toString();
+		String customerId2 = UUID.randomUUID().toString();
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham_2@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		customerCommandService.handle(new ChangeCustomerEmailCommand(customerId2, "admin", "ham_3@email.pl"));
@@ -150,9 +162,12 @@ public class CommandServiceTest {
 	@Test
 	public void shouldAllowToChangeEmailToNotExistingOne() throws Exception {
 		//given
-		String customerId = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham@email.pl", "77112233445"));
-		String customerId2 = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham_2@email.pl", "77112233445"));
-		String customerId3 = customerCommandService.handle(new CreateCustomerCommand("admin", "Abra", "ham_3@email.pl", "77112233445"));
+		String customerId = UUID.randomUUID().toString();
+		String customerId2 = UUID.randomUUID().toString();
+		String customerId3 = UUID.randomUUID().toString();
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId3, "admin", "Abra", "ham_3@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId3))).isTrue();

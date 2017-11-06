@@ -1,13 +1,15 @@
 package pl.biltec.yaess.clp.adapters.store;
 
+import java.util.UUID;
+
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
 import org.junit.Before;
 import org.junit.Test;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
 import pl.biltec.yaess.core.adapters.store.RepositoryOverEventStore;
+import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
 import pl.biltec.yaess.core.adapters.store.memory.InMemorySnapshotStore;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryUniqueValuesStore;
 import pl.biltec.yaess.core.common.exception.ConcurrentModificationException;
@@ -28,7 +30,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldCreateAndRecreateFromSnapshot() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
 		for (int i = 0; i < 103; i++) {
 			customer.rename("handle #" + i, "admin");
 			customerRepository.save(customer);
@@ -43,7 +45,7 @@ public class EventStoreRepositoryTest {
 	public void shouldSavedCustomerRemainTheSameAfterGetFromStore() throws Exception {
 
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
 		customer.rename("Johhhny", "admin");
 		customer.rename("Bob", "admin");
 		customerRepository.save(customer);
@@ -60,7 +62,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenNoModificationMadeBeAllowed() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());
@@ -76,7 +78,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenModificationMadeThrowException() throws Exception {
 		//given
-		Customer customer = new Customer("Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());

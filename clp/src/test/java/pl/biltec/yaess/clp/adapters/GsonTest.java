@@ -1,6 +1,7 @@
 package pl.biltec.yaess.clp.adapters;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class GsonTest {
 	@Test
 	public void shouldGsonSerializeAndDeserializeCustomer() throws Exception {
 		//given
-		Customer customer = new Customer("zenek", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "zenek", "test@email.pl", "77112233445", "admin");
 		customer.clearUncommittedEvents();
 		String json = new Gson().toJson(customer);
 

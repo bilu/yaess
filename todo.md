@@ -1,5 +1,6 @@
 # TODO
 
+* pagination / scrollable during events fetch (larg number of events / out of mem)
 * UniqueValuesStore - need to handle removal and rename in public API
 * snapshot as async
 * comparision of effectiveness of fetch with / without snapshot

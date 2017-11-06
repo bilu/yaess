@@ -35,14 +35,14 @@ public class Customer extends RootAggregate {
 	}
 
 	//BUSINESS METHODS
-	public Customer(String name, String email, String personalIdNumber, String originator) {
+	public Customer(String customerId, String name, String email, String personalIdNumber, String originator) {
 
 		// TODO: [pbilewic] 09.10.17 czy to nie powinien być wyjątek klasy DomainOperationException?
 		Contract.notNull(originator, "originator");
 		Contract.notNull(name, "newName");
 		Contract.notNull(email, "email");
 		Contract.notNull(personalIdNumber, "personalIdNumber");
-		apply(new CustomerCreatedEvent(new RootAggregateId(), name, email.toLowerCase(), personalIdNumber, LocalDateTime.now(), originator));
+		apply(new CustomerCreatedEvent(new RootAggregateId(customerId), name, email.toLowerCase(), personalIdNumber, LocalDateTime.now(), originator));
 	}
 
 	public void rename(String newName, String originator) {

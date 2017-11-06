@@ -48,7 +48,9 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 	@Override
 	public ROOT get(RootAggregateId id) {
-		Contract.notNull(id, "id");
+
+		Contract.isTrue(exists(id), "Not found ID=" + id);
+
 		return snapshotStore
 			.loadSnapshot(id)
 			.map(rootAggregate -> {
@@ -57,7 +59,7 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 				return (ROOT) rootAggregate;
 			})
 			// TODO [bilu] 24.10.17 constructor vs newInstance, performance context
-			.orElse(invokeConstructor(rootClass, eventStore.loadEvents(id, rootClass)));
+			.orElseGet((() -> invokeConstructor(rootClass, eventStore.loadEvents(id, rootClass))));
 	}
 
 	@Override

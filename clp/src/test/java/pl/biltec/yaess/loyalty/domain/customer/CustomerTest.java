@@ -3,6 +3,7 @@ package pl.biltec.yaess.loyalty.domain.customer;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
@@ -22,7 +23,7 @@ public class CustomerTest {
 	@Test
 	public void shouldCreateCustomer() throws Exception {
 		//when
-		Customer customer = new Customer("test newName 1", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "test newName 1", "test@email.pl", "77112233445", "admin");
 		customer.rename("test newName 2", "admin");
 
 		//then

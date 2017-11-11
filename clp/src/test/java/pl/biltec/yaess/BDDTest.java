@@ -38,13 +38,18 @@ public abstract class BDDTest<SELF_TYPE extends BDDTest<SELF_TYPE, COMMAND_SERVI
 
 	public abstract COMMAND_SERVICE prepare();
 
-	public SELF_TYPE given(Command... commands) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public SELF_TYPE given(Command... commands) {
 
 		invokeMultipleCommands(commands);
 		return self();
 	}
 
-	private void invokeMultipleCommands(Command[] commands) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	public SELF_TYPE andGiven(Command... commands) {
+
+		return given(commands);
+	}
+
+	private void invokeMultipleCommands(Command[] commands) {
 
 		if (commands != null) {
 			for (int i = 0; i < commands.length; i++) {
@@ -53,15 +58,14 @@ public abstract class BDDTest<SELF_TYPE extends BDDTest<SELF_TYPE, COMMAND_SERVI
 		}
 	}
 
-	private void invokeSingleCommand(Command command) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+	private void invokeSingleCommand(Command command) {
 
-		MethodUtils.invokeExactMethod(commandService, "handle", command);
-	}
-
-	public SELF_TYPE and(Command... commands) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-
-		invokeMultipleCommands(commands);
-		return self();
+		try {
+			MethodUtils.invokeExactMethod(commandService, "handle", command);
+		}
+		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+			throw new IllegalStateException(e.getMessage(), e);
+		}
 	}
 
 	public SELF_TYPE when(Command... commands) {
@@ -78,6 +82,11 @@ public abstract class BDDTest<SELF_TYPE extends BDDTest<SELF_TYPE, COMMAND_SERVI
 		return self();
 	}
 
+	public SELF_TYPE andWhen(Command... commands) {
+
+		return when(commands);
+	}
+
 	public SELF_TYPE thenThrowNoException() {
 
 		if (exceptionThrownOptional.isPresent()) {
@@ -91,6 +100,8 @@ public abstract class BDDTest<SELF_TYPE extends BDDTest<SELF_TYPE, COMMAND_SERVI
 	public SELF_TYPE thenThrow(Class<? extends Exception> exceptionClass, String hasMessageContaining) {
 
 		Throwable throwable = exceptionThrownOptional
+			//unwrap InvocationTargetException and IllegalStateException from invokeSingleCommand()
+			.map(Throwable::getCause)
 			.map(Throwable::getCause)
 			.orElseThrow(() -> new AssertionError("Expected exception of class " + exceptionClass + " with message containing " + hasMessageContaining));
 		Assertions.assertThat(throwable).isInstanceOf(exceptionClass).hasMessageContaining(hasMessageContaining);
@@ -112,7 +123,7 @@ public abstract class BDDTest<SELF_TYPE extends BDDTest<SELF_TYPE, COMMAND_SERVI
 		return UUID.randomUUID().toString();
 	}
 
-	public SELF_TYPE sleep(int millis) {
+	public SELF_TYPE whenWaitForMillis(int millis) {
 
 		try {
 			Thread.sleep(millis);

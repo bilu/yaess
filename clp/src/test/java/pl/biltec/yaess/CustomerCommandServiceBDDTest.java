@@ -75,9 +75,9 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 		given(
 			new CreateCustomerCommand(customerId1, "a", "b", "c@email.pl", "d"),
 			new ChangeCustomerEmailCommand(customerId1, "b", "d@email.pl")
-		).sleep(10);
+		);
 
-		when(
+		whenWaitForMillis(10).andWhen(
 			new CreateCustomerCommand(customerId2, "a", "b", "d@email.pl", "d")
 		);
 

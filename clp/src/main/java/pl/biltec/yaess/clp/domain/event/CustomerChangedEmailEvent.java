@@ -12,16 +12,23 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 
 public class CustomerChangedEmailEvent extends Event{
 
-	private String email;
+	private String newEmail;
+	private String oldEmail;
 
-	public CustomerChangedEmailEvent(RootAggregateId id, String email, LocalDateTime now, String originator) {
+	public CustomerChangedEmailEvent(RootAggregateId id, String oldEmail, String newEmail, LocalDateTime now, String originator) {
 		super(id, now, originator);
-		this.email = email;
+		this.newEmail = newEmail;
+		this.oldEmail = oldEmail;
 	}
 
-	public String getEmail() {
+	public String getNewEmail() {
 
-		return email;
+		return newEmail;
+	}
+
+	public String getOldEmail() {
+
+		return oldEmail;
 	}
 
 	@Override
@@ -37,7 +44,7 @@ public class CustomerChangedEmailEvent extends Event{
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
-			.append(email, that.email)
+			.append(newEmail, that.newEmail)
 			.isEquals();
 	}
 
@@ -46,7 +53,7 @@ public class CustomerChangedEmailEvent extends Event{
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(email)
+			.append(newEmail)
 			.toHashCode();
 	}
 
@@ -54,7 +61,7 @@ public class CustomerChangedEmailEvent extends Event{
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("email", email)
+			.append("newEmail", newEmail)
 			.append("customerId", rootAggregateId)
 			.append("eventID", eventID)
 			.append("version", version)

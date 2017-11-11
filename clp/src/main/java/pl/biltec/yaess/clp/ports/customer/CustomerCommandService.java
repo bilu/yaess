@@ -58,7 +58,7 @@ public class CustomerCommandService {
 
 	public void handle(ChangeCustomerEmailCommand command) {
 
-		Contract.notNull(command.getEmail(), "command.getEmail()");
+		Contract.notNull(command.getEmail(), "command.getNewEmail()");
 
 		action(command, customer -> {
 			isTrue(customerRepository.isEmailUnique(customer.id(), command.getEmail()), "Email " + command.getEmail() + " already occupied");

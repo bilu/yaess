@@ -61,7 +61,7 @@ public class CustomerCommandServiceTest {
 			@Override
 			public void handle(CustomerChangedEmailEvent customerChangedEmailEvent) {
 
-				uniqueValueStore.addUnique(Customer.class, customerChangedEmailEvent.rootAggregateId(), "EMAIL", customerChangedEmailEvent.getEmail());
+				uniqueValueStore.addUnique(Customer.class, customerChangedEmailEvent.rootAggregateId(), "EMAIL", customerChangedEmailEvent.getNewEmail());
 			}
 		};
 	}

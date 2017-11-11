@@ -33,7 +33,13 @@ public class NoUniqueValuesStore implements UniqueValuesStore {
 
 	}
 
-//	@Override
+	@Override
+	public void removeUnique(Class<? extends RootAggregate> rootAggregateClass, RootAggregateId rootAggregateId, String attributeName, String attributeValue) {
+
+		throwIllegalStateException();
+	}
+
+	//	@Override
 //	public Map<String, List<RootAggregateId>> getNotUnique(Class<? extends RootAggregate> rootAggregateClass) {
 //
 //		return throwIllegalStateException();

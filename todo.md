@@ -1,5 +1,14 @@
 # TODO
 
+* upcast
+    * Event -> null
+    * Event -> Event ver. 2
+    * Event -> Event ver. 2 -> Event ver. 3
+    * null -> Event - the easiest one
+    
+    
+* query part
+
 * pagination / scrollable during events fetch (larg number of events / out of mem)
 * UniqueValuesStore - need to handle removal and rename in public API
 * snapshot as async

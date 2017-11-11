@@ -29,14 +29,27 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 		EventStore eventStore = new InMemoryEventStore();
 		SnapshotStore snapshotStore = new InMemorySnapshotStore();
 		UniqueValuesStore uniqueValueStore = new InMemoryUniqueValuesStore();
-		eventStore.addEventSubscriber(uniqueEmailsUpdater(uniqueValueStore));
-		CustomerRepositoryOverEventStore customerRepository;
-		customerRepository = new CustomerRepositoryOverEventStore(eventStore, snapshotStore, uniqueValueStore, Customer.class);
+		eventStore.addEventSubscriber(uniqueEmailsAppender(uniqueValueStore));
+		eventStore.addEventSubscriber(uniqueEmailsRemover(uniqueValueStore));
+		CustomerRepositoryOverEventStore customerRepository = new CustomerRepositoryOverEventStore(eventStore, snapshotStore, uniqueValueStore, Customer.class);
 		AuthorizationService allowEveryoneAuthorizationService = command -> true;
 		return new CustomerCommandService(customerRepository, allowEveryoneAuthorizationService);
 	}
 
-	private SingleEventSubscriber<Event> uniqueEmailsUpdater(UniqueValuesStore uniqueValueStore) {
+	private SingleEventSubscriber<CustomerChangedEmailEvent> uniqueEmailsRemover(UniqueValuesStore uniqueValueStore) {
+
+		return new SingleEventSubscriber<CustomerChangedEmailEvent>(CustomerChangedEmailEvent.class) {
+
+			@Override
+			public void handle(CustomerChangedEmailEvent event) {
+
+				uniqueValueStore.removeUnique(Customer.class, event.rootAggregateId(), CustomerRepositoryOverEventStore.EMAIL_ATTRIBUTE_NAME, event.getOldEmail());
+
+			}
+		};
+	}
+
+	private SingleEventSubscriber<Event> uniqueEmailsAppender(UniqueValuesStore uniqueValueStore) {
 
 		return new SingleEventSubscriber<Event>(Event.class) {
 
@@ -45,10 +58,10 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 
 				if(event instanceof CustomerChangedEmailEvent) {
 					CustomerChangedEmailEvent e = (CustomerChangedEmailEvent) event;
-					uniqueValueStore.addUnique(Customer.class, event.rootAggregateId(), "EMAIL", e.getEmail());
+					uniqueValueStore.addUnique(Customer.class, event.rootAggregateId(), CustomerRepositoryOverEventStore.EMAIL_ATTRIBUTE_NAME, e.getNewEmail());
 				} else if(event instanceof CustomerCreatedEvent) {
 					CustomerCreatedEvent e = (CustomerCreatedEvent) event;
-					uniqueValueStore.addUnique(Customer.class, event.rootAggregateId(), "EMAIL", e.getEmail());
+					uniqueValueStore.addUnique(Customer.class, event.rootAggregateId(), CustomerRepositoryOverEventStore.EMAIL_ATTRIBUTE_NAME, e.getEmail());
 				}
 			}
 		};
@@ -60,15 +73,15 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 		String customerId1 = givenRandomId();
 		String customerId2 = givenRandomId();
 		given(
-			new CreateCustomerCommand(customerId1, "a", "b", "c", "d"),
-			new ChangeCustomerEmailCommand(customerId1, "b", "d")
-		);
+			new CreateCustomerCommand(customerId1, "a", "b", "c@email.pl", "d"),
+			new ChangeCustomerEmailCommand(customerId1, "b", "d@email.pl")
+		).sleep(10);
 
 		when(
-			new CreateCustomerCommand(customerId2, "a", "b", "c", "d")
+			new CreateCustomerCommand(customerId2, "a", "b", "d@email.pl", "d")
 		);
 
-		thenThrow(ConditionNotMetException.class, "c already occupied");
+		thenThrow(ConditionNotMetException.class, "d@email.pl already occupied");
 	}
 
 }

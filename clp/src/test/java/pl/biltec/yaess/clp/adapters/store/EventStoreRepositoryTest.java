@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
+import pl.biltec.yaess.core.adapters.store.NoEventUpcaster;
 import pl.biltec.yaess.core.adapters.store.RepositoryOverEventStore;
 import pl.biltec.yaess.core.adapters.store.memory.InMemoryEventStore;
 import pl.biltec.yaess.core.adapters.store.memory.InMemorySnapshotStore;
@@ -23,7 +24,7 @@ public class EventStoreRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 
-		customerRepository = new RepositoryOverEventStore(new InMemoryEventStore(), new InMemorySnapshotStore(), new InMemoryUniqueValuesStore(), Customer.class);
+		customerRepository = new RepositoryOverEventStore(new InMemoryEventStore(), new NoEventUpcaster(), new InMemorySnapshotStore(), new InMemoryUniqueValuesStore(), Customer.class);
 
 	}
 

@@ -55,4 +55,19 @@ public class InMemoryUniqueValuesStore implements UniqueValuesStore {
 
 		uniqueValueRecords.add(new UniqueValueRecord(rootAggregateClass, rootAggregateId, attributeName, attributeValue));
 	}
+
+	@Override
+	public void removeUnique(Class<? extends RootAggregate> rootAggregateClass, RootAggregateId rootAggregateId, String attributeName, String attributeValue) {
+
+		Contract.notNull(rootAggregateClass, "rootAggregateClass");
+		Contract.notNull(attributeName, "attributeName");
+		Contract.notNull(attributeValue, "attributeValue");
+
+		uniqueValueRecords.stream()
+			.filter(uniqueValueRecord -> uniqueValueRecord.getRootAggregateClass().equals(rootAggregateClass))
+			.filter(uniqueValueRecord -> uniqueValueRecord.getAttributeName().equals(attributeName))
+			.filter(uniqueValueRecord -> uniqueValueRecord.getAttributeValue().equals(attributeValue))
+			.findFirst()
+			.ifPresent(uniqueValueRecords::remove);
+	}
 }

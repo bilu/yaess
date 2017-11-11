@@ -20,6 +20,8 @@ public interface UniqueValuesStore {
 
 	void addUnique(Class<? extends RootAggregate> rootAggregateClass, RootAggregateId rootAggregateId, String attributeName, String attributeValue);
 
+	void removeUnique(Class<? extends RootAggregate> rootAggregateClass, RootAggregateId rootAggregateId, String attributeName, String attributeValue);
+
 	// TODO [bilu] 28.10.17 custom made object
 	//Map<attributeName, List<rootAggregateId>>
 //	Map<String, List<RootAggregateId>> getNotUnique(Class<? extends RootAggregate> rootAggregateClass);

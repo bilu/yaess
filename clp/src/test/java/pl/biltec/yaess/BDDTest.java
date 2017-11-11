@@ -111,4 +111,15 @@ public abstract class BDDTest<SELF_TYPE extends BDDTest<SELF_TYPE, COMMAND_SERVI
 
 		return UUID.randomUUID().toString();
 	}
+
+	public SELF_TYPE sleep(int millis) {
+
+		try {
+			Thread.sleep(millis);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		return self();
+	}
 }

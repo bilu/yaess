@@ -59,10 +59,10 @@ public class Customer extends RootAggregate {
 
 		Contract.notNull(originator, "originator");
 		Contract.notNull(newEmail, "newEmail");
-		String lowerCaseEmail = newEmail.toLowerCase();
+		String newEmailLowerCase = newEmail.toLowerCase();
 		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
-		if (!this.email.equals(lowerCaseEmail)) {
-			apply(new CustomerChangedEmailEvent(id, lowerCaseEmail, LocalDateTime.now(), originator));
+		if (!this.email.equals(newEmailLowerCase)) {
+			apply(new CustomerChangedEmailEvent(id, email, newEmailLowerCase, LocalDateTime.now(), originator));
 		}
 
 	}
@@ -84,7 +84,7 @@ public class Customer extends RootAggregate {
 
 	private void mutate(CustomerChangedEmailEvent event) {
 
-		this.email = event.getEmail();
+		this.email = event.getNewEmail();
 	}
 
 	private void mutate(CustomerCreatedEvent event) {

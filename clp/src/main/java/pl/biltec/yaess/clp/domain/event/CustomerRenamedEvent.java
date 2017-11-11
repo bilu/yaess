@@ -57,8 +57,7 @@ public class CustomerRenamedEvent extends Event {
 		return new ToStringBuilder(this)
 			.append("newName", newName)
 			.append("customerId", rootAggregateId)
-			.append("eventID", eventID)
-			.append("version", version)
+			.append("eventId", eventId)
 			.append("created", created)
 			.toString();
 	}

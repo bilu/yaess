@@ -9,16 +9,14 @@ class EventRecord {
 	private String rootId;
 
 	private String eventClassName;
-	private int eventVersion;
 	private String eventAsJson;
 	private LocalDateTime eventCreated;
 
-	public EventRecord(String rootAggregateName, String rootId, String eventClassName, int eventVersion, String eventAsJson, LocalDateTime eventCreated) {
+	public EventRecord(String rootAggregateName, String rootId, String eventClassName, String eventAsJson, LocalDateTime eventCreated) {
 
 		this.rootAggregateName = rootAggregateName;
 		this.rootId = rootId;
 		this.eventClassName = eventClassName;
-		this.eventVersion = eventVersion;
 		this.eventAsJson = eventAsJson;
 		this.eventCreated = eventCreated;
 	}
@@ -36,11 +34,6 @@ class EventRecord {
 	public String getEventClassName() {
 
 		return eventClassName;
-	}
-
-	public int getEventVersion() {
-
-		return eventVersion;
 	}
 
 	public String getEventAsJson() {

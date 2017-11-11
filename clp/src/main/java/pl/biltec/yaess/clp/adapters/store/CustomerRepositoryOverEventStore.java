@@ -3,7 +3,6 @@ package pl.biltec.yaess.clp.adapters.store;
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.core.adapters.store.EventStore;
-import pl.biltec.yaess.core.adapters.store.NoEventUpcaster;
 import pl.biltec.yaess.core.adapters.store.RepositoryOverEventStore;
 import pl.biltec.yaess.core.adapters.store.SnapshotStore;
 import pl.biltec.yaess.core.adapters.store.UniqueValuesStore;
@@ -27,7 +26,7 @@ public class CustomerRepositoryOverEventStore extends RepositoryOverEventStore<C
 		UniqueValuesStore uniqueValuesStore,
 		Class<Customer> customerClass) {
 
-		super(eventStore, new NoEventUpcaster(), snapshotStore, uniqueValuesStore, customerClass);
+		super(eventStore, snapshotStore, uniqueValuesStore, customerClass);
 	}
 
 	@Override

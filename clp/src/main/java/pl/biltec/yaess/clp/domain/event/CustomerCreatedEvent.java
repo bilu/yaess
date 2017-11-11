@@ -77,8 +77,7 @@ public class CustomerCreatedEvent extends Event {
 			.append("email", email)
 			.append("personalIdNumber", personalIdNumber)
 			.append("rootAggregateId", rootAggregateId)
-			.append("eventID", eventID)
-			.append("version", version)
+			.append("eventId", eventId)
 			.append("created", created)
 			.append("originator", originator)
 			.toString();

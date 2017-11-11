@@ -25,8 +25,7 @@ public class CustomerHasDiedEvent extends Event {
 
 		return new ToStringBuilder(this)
 			.append("customerId", rootAggregateId)
-			.append("eventID", eventID)
-			.append("version", version)
+			.append("eventId", eventId)
 			.append("created", created)
 			.toString();
 	}

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
-import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
@@ -62,7 +62,7 @@ public class Customer extends RootAggregate {
 		String newEmailLowerCase = newEmail.toLowerCase();
 		// TODO [bilu] 28.10.17 should i override existing value? i chose not to
 		if (!this.email.equals(newEmailLowerCase)) {
-			apply(new CustomerChangedEmailEvent(id, email, newEmailLowerCase, LocalDateTime.now(), originator));
+			apply(new CustomerChangedEmailV2Event(id, email, newEmailLowerCase, LocalDateTime.now(), originator));
 		}
 
 	}
@@ -82,7 +82,7 @@ public class Customer extends RootAggregate {
 		deleted = true;
 	}
 
-	private void mutate(CustomerChangedEmailEvent event) {
+	private void mutate(CustomerChangedEmailV2Event event) {
 
 		this.email = event.getNewEmail();
 	}

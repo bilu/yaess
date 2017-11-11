@@ -19,5 +19,5 @@ public interface EventStore {
 
 
 	// TODO [bilu] 25.10.17 subscribers and publishing should not be managed by EventStore
-	EventStore addEventSubscriber(EventSubscriber eventSubscriber);
+	void addEventSubscriber(EventSubscriber eventSubscriber);
 }

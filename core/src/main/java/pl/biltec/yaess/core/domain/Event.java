@@ -13,8 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public abstract class Event implements Serializable {
 
 	protected RootAggregateId rootAggregateId;
-	protected UUID eventID;
-	protected int version;
+	protected UUID eventId;
 	protected LocalDateTime created;
 	protected String originator;
 
@@ -28,8 +27,7 @@ public abstract class Event implements Serializable {
 		this.rootAggregateId = notNull(rootAggregateId, "rootAggregateId");;
 		this.created = notNull(created, "created");
 		this.originator = notNull(originator, "originator");
-		this.eventID = UUID.randomUUID();
-		this.version = 1;
+		this.eventId = UUID.randomUUID();
 	}
 
 	public RootAggregateId rootAggregateId() {
@@ -42,14 +40,9 @@ public abstract class Event implements Serializable {
 		return created;
 	}
 
-	public int version() {
-
-		return version;
-	}
-
 	public String eventId() {
 
-		return eventID.toString();
+		return eventId.toString();
 	}
 
 	public String originator() {
@@ -69,9 +62,8 @@ public abstract class Event implements Serializable {
 		Event event = (Event) o;
 
 		return new EqualsBuilder()
-			.append(version, event.version)
 			.append(rootAggregateId, event.rootAggregateId)
-			.append(eventID, event.eventID)
+			.append(eventId, event.eventId)
 			.append(created, event.created)
 			.append(originator, event.originator)
 			.isEquals();
@@ -89,8 +81,7 @@ public abstract class Event implements Serializable {
 
 		return new HashCodeBuilder(17, 37)
 			.append(rootAggregateId)
-			.append(eventID)
-			.append(version)
+			.append(eventId)
 			.append(created)
 			.append(originator)
 			.toHashCode();

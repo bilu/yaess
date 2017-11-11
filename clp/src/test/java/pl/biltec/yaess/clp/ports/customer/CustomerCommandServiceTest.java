@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerRepositoryOverEventStore;
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
 import pl.biltec.yaess.clp.ports.customer.command.ChangeCustomerEmailCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
@@ -54,14 +54,14 @@ public class CustomerCommandServiceTest {
 		};
 	}
 
-	private SingleEventSubscriber<CustomerChangedEmailEvent> emailsChangedUpdater(UniqueValuesStore uniqueValueStore) {
+	private SingleEventSubscriber<CustomerChangedEmailV2Event> emailsChangedUpdater(UniqueValuesStore uniqueValueStore) {
 
-		return new SingleEventSubscriber<CustomerChangedEmailEvent>(CustomerChangedEmailEvent.class) {
+		return new SingleEventSubscriber<CustomerChangedEmailV2Event>(CustomerChangedEmailV2Event.class) {
 
 			@Override
-			public void handle(CustomerChangedEmailEvent customerChangedEmailEvent) {
+			public void handle(CustomerChangedEmailV2Event customerChangedEmailV2Event) {
 
-				uniqueValueStore.addUnique(Customer.class, customerChangedEmailEvent.rootAggregateId(), "EMAIL", customerChangedEmailEvent.getNewEmail());
+				uniqueValueStore.addUnique(Customer.class, customerChangedEmailV2Event.rootAggregateId(), "EMAIL", customerChangedEmailV2Event.getNewEmail());
 			}
 		};
 	}

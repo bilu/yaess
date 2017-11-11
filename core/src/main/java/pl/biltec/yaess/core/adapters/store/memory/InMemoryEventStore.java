@@ -87,9 +87,9 @@ public class InMemoryEventStore implements EventStore {
 		if (exists(id, rootAggregateClass)) {
 			//			long calculatedConcurrencyVersion = eventStream(id, rootAggregateClass).count();
 			long calculatedConcurrencyVersion = Timer.count("eventStream(id, rootAggregateClass).count()", () -> eventStream(id, rootAggregateClass).count());
-
-			if (calculatedConcurrencyVersion != (currentConcurrencyVersion - events.size())) {
-				throw new ConcurrentModificationException(id.toString(), currentConcurrencyVersion, calculatedConcurrencyVersion);
+			long expectedConcurrencyVersion = currentConcurrencyVersion - events.size();
+			if (calculatedConcurrencyVersion != expectedConcurrencyVersion) {
+				throw new ConcurrentModificationException(id.toString(), expectedConcurrencyVersion, calculatedConcurrencyVersion);
 			}
 		}
 
@@ -114,7 +114,6 @@ public class InMemoryEventStore implements EventStore {
 			rootAggregateClass.getSimpleName(),
 			newEvent.rootAggregateId().toString(),
 			newEvent.getClass().getName(),
-			newEvent.version(),
 			gson.toJson(newEvent),
 			newEvent.created());
 	}
@@ -133,9 +132,8 @@ public class InMemoryEventStore implements EventStore {
 	}
 
 	@Override
-	public EventStore addEventSubscriber(EventSubscriber eventSubscriber) {
+	public void addEventSubscriber(EventSubscriber eventSubscriber) {
 
 		subscribers.add(eventSubscriber);
-		return this;
 	}
 }

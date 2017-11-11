@@ -16,7 +16,6 @@ import pl.biltec.yaess.core.domain.RootAggregateId;
 public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Repository<ROOT> {
 
 	protected EventStore eventStore;
-	protected EventUpcaster eventUpcaster;
 	protected SnapshotStore snapshotStore;
 	protected UniqueValuesStore uniqueValuesStore;
 	private Class<ROOT> rootClass;
@@ -24,13 +23,12 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 	public RepositoryOverEventStore(EventStore eventStore, Class<ROOT> rootClass) {
 
-		this(eventStore, new NoEventUpcaster(), new NoSnapshotStore(), new NoUniqueValuesStore(), rootClass);
+		this(eventStore, new NoSnapshotStore(), new NoUniqueValuesStore(), rootClass);
 	}
 
-	public RepositoryOverEventStore(EventStore eventStore, EventUpcaster eventUpcaster, SnapshotStore snapshotStore, UniqueValuesStore uniqueValuesStore, Class<ROOT> rootClass) {
+	public RepositoryOverEventStore(EventStore eventStore, SnapshotStore snapshotStore, UniqueValuesStore uniqueValuesStore, Class<ROOT> rootClass) {
 
 		this.eventStore = notNull(eventStore, "eventStore");
-		this.eventUpcaster = notNull(eventUpcaster, "eventUpcaster");
 		this.snapshotStore = notNull(snapshotStore, "snapshotStore");
 		this.rootClass = notNull(rootClass, "rootClass");
 		this.uniqueValuesStore = notNull(uniqueValuesStore, "uniqueValuesStore");
@@ -56,14 +54,12 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 		return snapshotStore
 			.loadSnapshot(id)
 			.map(rootAggregate -> {
-				List<Event> events = eventUpcaster.upcast(
-						eventStore.loadEvents(id, rootClass, rootAggregate.concurrencyVersion(), Integer.MAX_VALUE)
-					);
+				List<Event> events = eventStore.loadEvents(id, rootClass, rootAggregate.concurrencyVersion(), Integer.MAX_VALUE);
 				rootAggregate.apply(events);
 				return (ROOT) rootAggregate;
 			})
 			// TODO [bilu] 24.10.17 constructor vs newInstance, performance context
-			.orElseGet((() -> invokeConstructor(rootClass, eventUpcaster.upcast(eventStore.loadEvents(id, rootClass)))));
+			.orElseGet((() -> invokeConstructor(rootClass, eventStore.loadEvents(id, rootClass))));
 	}
 
 	@Override
@@ -102,6 +98,5 @@ public class RepositoryOverEventStore<ROOT extends RootAggregate> implements Rep
 
 		return uniqueValuesStore.isUnique(rootClass, attributeName, attributeValue);
 	}
-
 
 }

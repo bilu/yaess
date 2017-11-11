@@ -1,10 +1,7 @@
 # TODO
 
-* upcast
-    * Event -> null
-    * Event -> Event ver. 2
-    * Event -> Event ver. 2 -> Event ver. 3
-    * null -> Event - the easiest one
+* upcast event to no event (null, empty)
+* upcast event from one to many
     
     
 * query part

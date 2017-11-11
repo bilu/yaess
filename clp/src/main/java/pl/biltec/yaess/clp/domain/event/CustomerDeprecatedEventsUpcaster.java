@@ -8,11 +8,12 @@ public class CustomerDeprecatedEventsUpcaster extends DeprecatedEventsUpcaster {
 	public CustomerDeprecatedEventsUpcaster() {
 
 		define(CustomerChangedEmailEvent.class,
-			customerChangedEmailEvent -> new CustomerChangedEmailV2Event(customerChangedEmailEvent.rootAggregateId(),
-			"unknown",
-			customerChangedEmailEvent.getEmail(),
-			customerChangedEmailEvent.created(),
-			customerChangedEmailEvent.originator()));
+			customerChangedEmailEvent -> new CustomerChangedEmailV2Event(
+				customerChangedEmailEvent.rootAggregateId(),
+				"unknown",
+				customerChangedEmailEvent.getEmail(),
+				customerChangedEmailEvent.created(),
+				customerChangedEmailEvent.originator()));
 
 	}
 

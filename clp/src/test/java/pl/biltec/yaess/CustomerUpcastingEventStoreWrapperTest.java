@@ -35,7 +35,7 @@ public class CustomerUpcastingEventStoreWrapperTest {
 	}
 
 	@Test
-	public void shouldName() throws Exception {
+	public void shouldUpcastingWorksAsExpected() throws Exception {
 		//given
 		RootAggregateId customerId = new RootAggregateId(UUID.randomUUID().toString());
 		List<Event> events = Arrays.asList(

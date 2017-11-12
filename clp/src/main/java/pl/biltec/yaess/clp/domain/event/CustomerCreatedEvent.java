@@ -19,7 +19,7 @@ public class CustomerCreatedEvent extends Event {
 	private String email;
 	private String personalIdNumber;
 
-	public CustomerCreatedEvent(RootAggregateId id, LocalDateTime created, String originator, String gender, String name, String email, String personalIdNumber) {
+	public CustomerCreatedEvent(RootAggregateId id, String gender, String name, String email, String personalIdNumber, LocalDateTime created, String originator) {
 
 		super(id, created, originator);
 		this.gender = gender;

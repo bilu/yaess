@@ -1,5 +1,6 @@
 package pl.biltec.yaess.core.adapters.store;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +23,23 @@ public class UpcastingEventStoreWrapper implements EventStore {
 				if (upcaster.contains(eventClass)) {
 					return upcaster.upcast(eventClass, event);
 				}
-				return event;
-			}).collect(Collectors.toList());
+				return Arrays.asList(event);
+			})
+			.flatMap(List::stream)
+			.collect(Collectors.toList());
+	}
+
+	public static void main(String[] args) {
+
+		List<String> l = Arrays.asList("a", "b", "c");
+		System.out.println(l);
+
+		List<String> result = l.stream()
+			.map(element -> Arrays.asList(element + 1, element + 2))
+			.flatMap(List::stream)
+			.collect(Collectors.toList());
+
+		System.out.println(result);
 	}
 
 	public UpcastingEventStoreWrapper(EventStore wrappedEventStore, DeprecatedEventsUpcaster upcaster) {

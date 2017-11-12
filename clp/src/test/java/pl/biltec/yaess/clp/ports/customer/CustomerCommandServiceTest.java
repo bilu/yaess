@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerRepositoryOverEventStore;
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailV2Event;
-import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedV2Event;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedV2Event;
 import pl.biltec.yaess.clp.ports.customer.command.ChangeCustomerEmailCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
 import pl.biltec.yaess.core.adapters.store.EventStore;
@@ -42,26 +42,26 @@ public class CustomerCommandServiceTest {
 
 	}
 
-	private SingleEventSubscriber<CustomerCreatedEvent> emailsCreatedUpdater(UniqueValuesStore uniqueValueStore) {
+	private SingleEventSubscriber<CustomerCreatedV2Event> emailsCreatedUpdater(UniqueValuesStore uniqueValueStore) {
 
-		return new SingleEventSubscriber<CustomerCreatedEvent>(CustomerCreatedEvent.class) {
+		return new SingleEventSubscriber<CustomerCreatedV2Event>(CustomerCreatedV2Event.class) {
 
 			@Override
-			public void handle(CustomerCreatedEvent customerCreatedEvent) {
+			public void handle(CustomerCreatedV2Event customerCreatedV2Event) {
 
-				uniqueValueStore.addUnique(Customer.class, customerCreatedEvent.rootAggregateId(), "EMAIL", customerCreatedEvent.getEmail());
+				uniqueValueStore.addUnique(Customer.class, customerCreatedV2Event.rootAggregateId(), "EMAIL", customerCreatedV2Event.getEmail());
 			}
 		};
 	}
 
-	private SingleEventSubscriber<CustomerChangedEmailV2Event> emailsChangedUpdater(UniqueValuesStore uniqueValueStore) {
+	private SingleEventSubscriber<CustomerEmailChangedV2Event> emailsChangedUpdater(UniqueValuesStore uniqueValueStore) {
 
-		return new SingleEventSubscriber<CustomerChangedEmailV2Event>(CustomerChangedEmailV2Event.class) {
+		return new SingleEventSubscriber<CustomerEmailChangedV2Event>(CustomerEmailChangedV2Event.class) {
 
 			@Override
-			public void handle(CustomerChangedEmailV2Event customerChangedEmailV2Event) {
+			public void handle(CustomerEmailChangedV2Event customerEmailChangedV2Event) {
 
-				uniqueValueStore.addUnique(Customer.class, customerChangedEmailV2Event.rootAggregateId(), "EMAIL", customerChangedEmailV2Event.getNewEmail());
+				uniqueValueStore.addUnique(Customer.class, customerEmailChangedV2Event.rootAggregateId(), "EMAIL", customerEmailChangedV2Event.getNewEmail());
 			}
 		};
 	}
@@ -70,7 +70,7 @@ public class CustomerCommandServiceTest {
 	public void shouldCreateCustomer() throws Exception {
 		//when
 		String customerId = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
 
 		//then
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
@@ -81,8 +81,8 @@ public class CustomerCommandServiceTest {
 		//when
 		String customerId = UUID.randomUUID().toString();
 		String customerId2 = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "Dab", "ham_2@email.pl", "77112233445"));
 
 		//then
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
@@ -94,13 +94,13 @@ public class CustomerCommandServiceTest {
 		//given
 		String customerId = UUID.randomUUID().toString();
 		String customerId2 = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
 
 		try {
 			//when
 			//awaits for async unique email loads
 			waitForAsyncUpdateFinish();
-			customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham@email.pl", "77112233445"));
+			customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
 			Fail.fail("exception expected");
 		}
 		catch (Exception e) {
@@ -115,9 +115,9 @@ public class CustomerCommandServiceTest {
 		String customerId = UUID.randomUUID().toString();
 		String customerId2 = UUID.randomUUID().toString();
 		String customerId3 = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId3, "admin", "Abra", "ham_3@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "Dab", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId3, "admin", "Abra", "Dab", "ham_3@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId3))).isTrue();
@@ -140,8 +140,8 @@ public class CustomerCommandServiceTest {
 		//given
 		String customerId = UUID.randomUUID().toString();
 		String customerId2 = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "Dab", "ham_2@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		customerCommandService.handle(new ChangeCustomerEmailCommand(customerId2, "admin", "ham_3@email.pl"));
@@ -165,9 +165,9 @@ public class CustomerCommandServiceTest {
 		String customerId = UUID.randomUUID().toString();
 		String customerId2 = UUID.randomUUID().toString();
 		String customerId3 = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "ham@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "ham_2@email.pl", "77112233445"));
-		customerCommandService.handle(new CreateCustomerCommand(customerId3, "admin", "Abra", "ham_3@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Abra", "Dab", "ham@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId2, "admin", "Abra", "Dab", "ham_2@email.pl", "77112233445"));
+		customerCommandService.handle(new CreateCustomerCommand(customerId3, "admin", "Abra", "Dab", "ham_3@email.pl", "77112233445"));
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId2))).isTrue();
 		Assertions.assertThat(customerRepository.exists(new RootAggregateId(customerId3))).isTrue();

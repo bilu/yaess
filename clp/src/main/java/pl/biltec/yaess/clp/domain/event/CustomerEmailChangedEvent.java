@@ -10,15 +10,13 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-/**
- * Kept only for backward compatibility
- */
+/** Kept only for backward compatibility */
 @Deprecated
-public class CustomerChangedEmailEvent extends Event {
+public class CustomerEmailChangedEvent extends Event {
 
 	private String email;
 
-	public CustomerChangedEmailEvent(RootAggregateId id, String email, LocalDateTime now, String originator) {
+	public CustomerEmailChangedEvent(RootAggregateId id, String email, LocalDateTime now, String originator) {
 
 		super(id, now, originator);
 		this.email = email;
@@ -35,10 +33,10 @@ public class CustomerChangedEmailEvent extends Event {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerChangedEmailEvent))
+		if (!(o instanceof CustomerEmailChangedEvent))
 			return false;
 
-		CustomerChangedEmailEvent that = (CustomerChangedEmailEvent) o;
+		CustomerEmailChangedEvent that = (CustomerEmailChangedEvent) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))

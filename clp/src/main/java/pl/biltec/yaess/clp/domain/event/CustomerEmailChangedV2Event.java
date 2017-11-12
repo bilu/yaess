@@ -10,21 +10,25 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-/** Kept only for backward compatibility */
-@Deprecated
-public class CustomerRenamedEvent extends Event {
+public class CustomerEmailChangedV2Event extends Event{
 
-	private String newName;
+	private String newEmail;
+	private String oldEmail;
 
-	public CustomerRenamedEvent(RootAggregateId id, String newName, LocalDateTime timestamp, String originator) {
-
-		super(id, timestamp, originator);
-		this.newName = newName;
+	public CustomerEmailChangedV2Event(RootAggregateId id, String oldEmail, String newEmail, LocalDateTime now, String originator) {
+		super(id, now, originator);
+		this.newEmail = newEmail;
+		this.oldEmail = oldEmail;
 	}
 
-	public String getNewName() {
+	public String getNewEmail() {
 
-		return newName;
+		return newEmail;
+	}
+
+	public String getOldEmail() {
+
+		return oldEmail;
 	}
 
 	@Override
@@ -33,14 +37,14 @@ public class CustomerRenamedEvent extends Event {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerRenamedEvent))
+		if (!(o instanceof CustomerEmailChangedV2Event))
 			return false;
 
-		CustomerRenamedEvent that = (CustomerRenamedEvent) o;
+		CustomerEmailChangedV2Event that = (CustomerEmailChangedV2Event) o;
 
 		return new EqualsBuilder()
-			.appendSuper(super.equals(that))
-			.append(newName, that.newName)
+			.appendSuper(super.equals(o))
+			.append(newEmail, that.newEmail)
 			.isEquals();
 	}
 
@@ -49,7 +53,7 @@ public class CustomerRenamedEvent extends Event {
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(newName)
+			.append(newEmail)
 			.toHashCode();
 	}
 
@@ -57,7 +61,8 @@ public class CustomerRenamedEvent extends Event {
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("newName", newName)
+			.append("newEmail", newEmail)
+			.append("oldEmail", oldEmail)
 			.append("customerId", rootAggregateId)
 			.append("eventId", eventId)
 			.append("created", created)

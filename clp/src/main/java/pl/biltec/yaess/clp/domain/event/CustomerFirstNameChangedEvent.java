@@ -10,25 +10,19 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CustomerChangedEmailV2Event extends Event{
+public class CustomerFirstNameChangedEvent extends Event {
 
-	private String newEmail;
-	private String oldEmail;
+	private String firstName;
 
-	public CustomerChangedEmailV2Event(RootAggregateId id, String oldEmail, String newEmail, LocalDateTime now, String originator) {
-		super(id, now, originator);
-		this.newEmail = newEmail;
-		this.oldEmail = oldEmail;
+	public CustomerFirstNameChangedEvent(RootAggregateId id, String firstName, LocalDateTime timestamp, String originator) {
+
+		super(id, timestamp, originator);
+		this.firstName = firstName;
 	}
 
-	public String getNewEmail() {
+	public String getFirstName() {
 
-		return newEmail;
-	}
-
-	public String getOldEmail() {
-
-		return oldEmail;
+		return firstName;
 	}
 
 	@Override
@@ -37,14 +31,14 @@ public class CustomerChangedEmailV2Event extends Event{
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerChangedEmailV2Event))
+		if (!(o instanceof CustomerFirstNameChangedEvent))
 			return false;
 
-		CustomerChangedEmailV2Event that = (CustomerChangedEmailV2Event) o;
+		CustomerFirstNameChangedEvent that = (CustomerFirstNameChangedEvent) o;
 
 		return new EqualsBuilder()
-			.appendSuper(super.equals(o))
-			.append(newEmail, that.newEmail)
+			.appendSuper(super.equals(that))
+			.append(firstName, that.firstName)
 			.isEquals();
 	}
 
@@ -53,7 +47,7 @@ public class CustomerChangedEmailV2Event extends Event{
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(newEmail)
+			.append(firstName)
 			.toHashCode();
 	}
 
@@ -61,8 +55,7 @@ public class CustomerChangedEmailV2Event extends Event{
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("newEmail", newEmail)
-			.append("oldEmail", oldEmail)
+			.append("firstName", firstName)
 			.append("customerId", rootAggregateId)
 			.append("eventId", eventId)
 			.append("created", created)

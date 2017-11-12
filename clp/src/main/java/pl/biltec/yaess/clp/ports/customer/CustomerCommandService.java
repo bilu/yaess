@@ -43,7 +43,7 @@ public class CustomerCommandService {
 		notNull(command, "command");
 		checkAuthorization(command);
 		isTrue(customerRepository.isEmailUnique(command.getEmail()), "Email " + command.getEmail() + " already occupied");
-		Customer customer = new Customer(command.rootAggregateId, command.getName(), command.getEmail(), command.getPersonalIdNumber(), command.getOriginator());
+		Customer customer = new Customer(command.rootAggregateId, command.getFirstName(), command.getSurname(), command.getEmail(), command.getPersonalIdNumber(), command.getOriginator());
 		// TODO [bilu] 28.10.17  unify type of exception ContractBroken vs DomainOperation
 		if (customerRepository.exists(customer.id())) {
 			throw new CustomerAlreadyCreatedException(customer.id());
@@ -53,8 +53,13 @@ public class CustomerCommandService {
 
 	public void handle(ChangeCustomerNameCommand command) {
 
-		action(command, customer -> customer.rename(command.getName(), command.originator));
+		action(command, customer -> {
+			customer.changeFirstName(command.getFirstName(), command.originator);
+			customer.changeSurname(command.getSurname(), command.originator);
+		});
 	}
+
+
 
 	public void handle(ChangeCustomerEmailCommand command) {
 

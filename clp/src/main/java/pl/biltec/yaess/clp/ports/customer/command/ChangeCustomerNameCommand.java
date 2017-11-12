@@ -9,19 +9,25 @@ import pl.biltec.yaess.clp.ports.customer.Command;
 
 public class ChangeCustomerNameCommand extends Command {
 
-	private String name;
+	private String firstName;
+	private String surname;
 
-	public ChangeCustomerNameCommand(String customerId, String originator, String name) {
+	public ChangeCustomerNameCommand(String customerId, String originator, String firstName, String surname) {
 
 		super(originator, customerId);
-		this.name = name;
+		this.firstName = firstName;
+		this.surname = surname;
 	}
 
-	public String getName() {
+	public String getFirstName() {
 
-		return name;
+		return firstName;
 	}
 
+	public String getSurname() {
+
+		return surname;
+	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -36,7 +42,8 @@ public class ChangeCustomerNameCommand extends Command {
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
-			.append(name, that.name)
+			.append(firstName, that.firstName)
+			.append(surname, that.surname)
 			.isEquals();
 	}
 
@@ -45,7 +52,8 @@ public class ChangeCustomerNameCommand extends Command {
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(name)
+			.append(firstName)
+			.append(surname)
 			.toHashCode();
 	}
 
@@ -53,7 +61,8 @@ public class ChangeCustomerNameCommand extends Command {
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("name", name)
+			.append("firstName", firstName)
+			.append("surname", surname)
 			.append("originator", originator)
 			.append("customerId", rootAggregateId)
 			.toString();

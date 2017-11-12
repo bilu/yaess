@@ -10,21 +10,19 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-/** Kept only for backward compatibility */
-@Deprecated
-public class CustomerRenamedEvent extends Event {
+public class CustomerSurnameChangedEvent extends Event {
 
-	private String newName;
+	private String surname;
 
-	public CustomerRenamedEvent(RootAggregateId id, String newName, LocalDateTime timestamp, String originator) {
+	public CustomerSurnameChangedEvent(RootAggregateId id, String surname, LocalDateTime timestamp, String originator) {
 
 		super(id, timestamp, originator);
-		this.newName = newName;
+		this.surname = surname;
 	}
 
-	public String getNewName() {
+	public String getSurname() {
 
-		return newName;
+		return surname;
 	}
 
 	@Override
@@ -33,14 +31,14 @@ public class CustomerRenamedEvent extends Event {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerRenamedEvent))
+		if (!(o instanceof CustomerSurnameChangedEvent))
 			return false;
 
-		CustomerRenamedEvent that = (CustomerRenamedEvent) o;
+		CustomerSurnameChangedEvent that = (CustomerSurnameChangedEvent) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(that))
-			.append(newName, that.newName)
+			.append(surname, that.surname)
 			.isEquals();
 	}
 
@@ -49,7 +47,7 @@ public class CustomerRenamedEvent extends Event {
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(newName)
+			.append(surname)
 			.toHashCode();
 	}
 
@@ -57,7 +55,7 @@ public class CustomerRenamedEvent extends Event {
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("newName", newName)
+			.append("surname", surname)
 			.append("customerId", rootAggregateId)
 			.append("eventId", eventId)
 			.append("created", created)

@@ -10,7 +10,8 @@ import org.assertj.core.api.Fail;
 import org.junit.Test;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedV2Event;
+import pl.biltec.yaess.clp.domain.event.CustomerFirstNameChangedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
 import pl.biltec.yaess.core.common.exception.ContractBrokenException;
 import pl.biltec.yaess.core.domain.Event;
@@ -23,8 +24,8 @@ public class CustomerTest {
 	@Test
 	public void shouldCreateCustomer() throws Exception {
 		//when
-		Customer customer = new Customer(UUID.randomUUID().toString(), "test newName 1", "test@email.pl", "77112233445", "admin");
-		customer.rename("test newName 2", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "test firstName 1", "test surname 1", "test@email.pl", "77112233445", "admin");
+		customer.changeFirstName("test firstName 2", "admin");
 
 		//then
 		Assertions.assertThat(customer).isNotNull();
@@ -36,8 +37,8 @@ public class CustomerTest {
 	public void shouldRecreateCustomer() throws Exception {
 		//given
 		RootAggregateId RootAggregateId = new RootAggregateId();
-		Event event1 = new CustomerCreatedEvent(RootAggregateId, "test newName 1", "test@email.pl", "77112233445", LocalDateTime.now(), "admin");
-		Event event2 = new CustomerRenamedEvent(RootAggregateId, "test newName 2", LocalDateTime.now(), "admin");
+		Event event1 = new CustomerCreatedV2Event(RootAggregateId, "test newName 1", "test surname 1", "test@email.pl", "77112233445", LocalDateTime.now(), "admin");
+		Event event2 = new CustomerFirstNameChangedEvent(RootAggregateId, "test newName 2", LocalDateTime.now(), "admin");
 		List<Event> customerEvents = Arrays.asList(event1, event2);
 
 		//when
@@ -53,7 +54,7 @@ public class CustomerTest {
 		//given
 		RootAggregateId RootAggregateId = new RootAggregateId();
 		RootAggregateId RootAggregateId2 = new RootAggregateId();
-		Event event1 = new CustomerCreatedEvent(RootAggregateId, "test newName 1", "test@email.pl", "77112233445", LocalDateTime.now(), "admin");
+		Event event1 = new CustomerCreatedV2Event(RootAggregateId, "test newName 1", "test surname 1", "test@email.pl", "77112233445", LocalDateTime.now(), "admin");
 		Event event2 = new CustomerRenamedEvent(RootAggregateId2, "test newName 2", LocalDateTime.now(), "admin");
 		List<Event> customerEvents = Arrays.asList(event1, event2);
 

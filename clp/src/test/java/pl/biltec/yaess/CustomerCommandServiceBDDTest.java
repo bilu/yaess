@@ -1,16 +1,11 @@
 package pl.biltec.yaess;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import org.junit.Test;
 
 import pl.biltec.yaess.clp.adapters.store.CustomerRepositoryOverEventStore;
 import pl.biltec.yaess.clp.domain.customer.Customer;
-import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailEvent;
-import pl.biltec.yaess.clp.domain.event.CustomerChangedEmailV2Event;
-import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedV2Event;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerDeprecatedEventsUpcaster;
 import pl.biltec.yaess.clp.ports.customer.AuthorizationService;
 import pl.biltec.yaess.clp.ports.customer.CustomerCommandService;
@@ -41,29 +36,20 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 		eventStore.addEventSubscriber(uniqueEmailsAppender(uniqueValueStore));
 		eventStore.addEventSubscriber(uniqueEmailsRemover(uniqueValueStore));
 
-		Map<Class<? extends Event>, Function<Event, Event>> upcaster = new HashMap<>();
-		upcaster.put(CustomerChangedEmailEvent.class, new Function<Event, Event>() {
-			@Override
-			public Event apply(Event event) {
-				CustomerChangedEmailEvent oldEvent = (CustomerChangedEmailEvent) event;
-				return new CustomerChangedEmailV2Event(oldEvent.rootAggregateId(), "unknown", oldEvent.getEmail(), oldEvent.created(), oldEvent.originator());
-			}
-		});
 		eventStore = new UpcastingEventStoreWrapper(eventStore, new CustomerDeprecatedEventsUpcaster());
 		customerRepository = new CustomerRepositoryOverEventStore(eventStore, snapshotStore, uniqueValueStore, Customer.class);
 		AuthorizationService allowEveryoneAuthorizationService = command -> true;
 		return new CustomerCommandService(customerRepository, allowEveryoneAuthorizationService);
 	}
 
-	private SingleEventSubscriber<CustomerChangedEmailV2Event> uniqueEmailsRemover(UniqueValuesStore uniqueValueStore) {
+	private SingleEventSubscriber<CustomerEmailChangedV2Event> uniqueEmailsRemover(UniqueValuesStore uniqueValueStore) {
 
-		return new SingleEventSubscriber<CustomerChangedEmailV2Event>(CustomerChangedEmailV2Event.class) {
+		return new SingleEventSubscriber<CustomerEmailChangedV2Event>(CustomerEmailChangedV2Event.class) {
 
 			@Override
-			public void handle(CustomerChangedEmailV2Event event) {
+			public void handle(CustomerEmailChangedV2Event event) {
 
 				uniqueValueStore.removeUnique(Customer.class, event.rootAggregateId(), CustomerRepositoryOverEventStore.EMAIL_ATTRIBUTE_NAME, event.getOldEmail());
-
 			}
 		};
 	}
@@ -75,11 +61,12 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 			@Override
 			public void handle(Event event) {
 
-				if(event instanceof CustomerChangedEmailV2Event) {
-					CustomerChangedEmailV2Event e = (CustomerChangedEmailV2Event) event;
+				if (event instanceof CustomerEmailChangedV2Event) {
+					CustomerEmailChangedV2Event e = (CustomerEmailChangedV2Event) event;
 					uniqueValueStore.addUnique(Customer.class, event.rootAggregateId(), CustomerRepositoryOverEventStore.EMAIL_ATTRIBUTE_NAME, e.getNewEmail());
-				} else if(event instanceof CustomerCreatedEvent) {
-					CustomerCreatedEvent e = (CustomerCreatedEvent) event;
+				}
+				else if (event instanceof CustomerCreatedV2Event) {
+					CustomerCreatedV2Event e = (CustomerCreatedV2Event) event;
 					uniqueValueStore.addUnique(Customer.class, event.rootAggregateId(), CustomerRepositoryOverEventStore.EMAIL_ATTRIBUTE_NAME, e.getEmail());
 				}
 			}
@@ -92,12 +79,12 @@ public class CustomerCommandServiceBDDTest extends BDDTest<CustomerCommandServic
 		String customerId1 = givenRandomId();
 		String customerId2 = givenRandomId();
 		given(
-			new CreateCustomerCommand(customerId1, "a", "b", "c@email.pl", "d"),
+			new CreateCustomerCommand(customerId1, "a", "b", "surname", "c@email.pl", "d"),
 			new ChangeCustomerEmailCommand(customerId1, "b", "d@email.pl")
 		);
 
 		whenWaitForMillis(10).andWhen(
-			new CreateCustomerCommand(customerId2, "a", "b", "d@email.pl", "d")
+			new CreateCustomerCommand(customerId2, "a", "b", "surname", "d@email.pl", "d")
 		);
 
 		thenThrow(ConditionNotMetException.class, "d@email.pl already occupied");

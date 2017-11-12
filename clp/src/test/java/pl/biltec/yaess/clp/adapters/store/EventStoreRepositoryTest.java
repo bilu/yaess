@@ -30,9 +30,9 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldCreateAndRecreateFromSnapshot() throws Exception {
 		//given
-		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "Blue", "test@email.pl", "77112233445", "admin");
 		for (int i = 0; i < 103; i++) {
-			customer.rename("handle #" + i, "admin");
+			customer.changeFirstName("handle #" + i, "admin");
 			customerRepository.save(customer);
 		}
 		//when
@@ -45,9 +45,9 @@ public class EventStoreRepositoryTest {
 	public void shouldSavedCustomerRemainTheSameAfterGetFromStore() throws Exception {
 
 		//given
-		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
-		customer.rename("Johhhny", "admin");
-		customer.rename("Bob", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "Blue", "test@email.pl", "77112233445", "admin");
+		customer.changeFirstName("Johhhny", "admin");
+		customer.changeFirstName("Bob", "admin");
 		customerRepository.save(customer);
 
 		//when
@@ -62,7 +62,7 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenNoModificationMadeBeAllowed() throws Exception {
 		//given
-		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "Blue", "test@email.pl", "77112233445", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());
@@ -78,13 +78,13 @@ public class EventStoreRepositoryTest {
 	@Test
 	public void shouldConcurrentSaveWhenModificationMadeThrowException() throws Exception {
 		//given
-		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "test@email.pl", "77112233445", "admin");
+		Customer customer = new Customer(UUID.randomUUID().toString(), "Jake", "Blue", "test@email.pl", "77112233445", "admin");
 		customerRepository.save(customer);
 		Customer concurrentCustomer1 = customerRepository.get(customer.id());
 		Customer concurrentCustomer2 = customerRepository.get(customer.id());
 
 		//when
-		concurrentCustomer1.rename("Jake2", "admin");
+		concurrentCustomer1.changeFirstName("Jake2", "admin");
 		customerRepository.save(concurrentCustomer1);
 
 		try {

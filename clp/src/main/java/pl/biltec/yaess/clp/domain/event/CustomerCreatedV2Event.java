@@ -1,22 +1,25 @@
-package pl.biltec.yaess.clp.ports.customer.command;
+package pl.biltec.yaess.clp.domain.event;
+
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import pl.biltec.yaess.clp.ports.customer.Command;
+import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class CreateCustomerCommand extends Command {
+public class CustomerCreatedV2Event extends Event {
 
 	private String firstName;
 	private String surname;
 	private String email;
 	private String personalIdNumber;
 
-	public CreateCustomerCommand(String customerId, String originator, String firstName, String surname, String email, String personalIdNumber) {
+	public CustomerCreatedV2Event(RootAggregateId id, String firstName, String surname, String email, String personalIdNumber, LocalDateTime created, String originator) {
 
-		super(originator, customerId);
+		super(id, created, originator);
 		this.firstName = firstName;
 		this.surname = surname;
 		this.email = email;
@@ -49,10 +52,10 @@ public class CreateCustomerCommand extends Command {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CreateCustomerCommand))
+		if (!(o instanceof CustomerCreatedV2Event))
 			return false;
 
-		CreateCustomerCommand that = (CreateCustomerCommand) o;
+		CustomerCreatedV2Event that = (CustomerCreatedV2Event) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
@@ -83,8 +86,10 @@ public class CreateCustomerCommand extends Command {
 			.append("surname", surname)
 			.append("email", email)
 			.append("personalIdNumber", personalIdNumber)
-			.append("originator", originator)
 			.append("rootAggregateId", rootAggregateId)
+			.append("eventId", eventId)
+			.append("created", created)
+			.append("originator", originator)
 			.toString();
 	}
 }

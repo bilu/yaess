@@ -16,27 +16,57 @@ public class CustomerDeprecatedEventsUpcaster extends DeprecatedEventsUpcaster {
 	public CustomerDeprecatedEventsUpcaster() {
 
 		define(CustomerCreatedEvent.class, customerCreatedEventConverter());
+		define(CustomerCreatedV2Event.class, customerCreatedEventV2Converter());
 		define(CustomerEmailChangedEvent.class, customerChangedEmailEventConverter());
 		define(CustomerGenderChangedEvent.class, customerGenderChangedEventConverter());
 		define(CustomerRenamedEvent.class, customerRenamedEventConverter());
+		define(CustomerSurnameChangedEvent.class, customerSurnameChangedEventConverter());
+
+	}
+
+	private EventConverter<CustomerSurnameChangedEvent> customerSurnameChangedEventConverter() {
+
+		return deprecatedEvent ->
+			Arrays.asList(
+				new CustomerLastNameChangedEvent(
+					deprecatedEvent.rootAggregateId(),
+					deprecatedEvent.getSurname(),
+					deprecatedEvent.created(),
+					deprecatedEvent.originator())
+			);
+	}
+
+	private EventConverter<CustomerCreatedV2Event> customerCreatedEventV2Converter() {
+
+		return deprecatedEvent ->
+			Arrays.asList(
+				new CustomerCreatedV3Event(
+					deprecatedEvent.rootAggregateId(),
+					deprecatedEvent.getFirstName(),
+					deprecatedEvent.getSurname(),
+					deprecatedEvent.getEmail(),
+					deprecatedEvent.getPersonalIdNumber(),
+					deprecatedEvent.created(),
+					deprecatedEvent.originator())
+			);
 
 	}
 
 	private EventConverter<CustomerCreatedEvent> customerCreatedEventConverter() {
 
-		return customerCreatedEvent -> {
-			List<String> splittedName = splitNameBySpace(customerCreatedEvent.getName());
+		return deprecatedEvent -> {
+			List<String> splittedName = splitNameBySpace(deprecatedEvent.getName());
 			String firstName = splittedName.get(0);
 			String surname = splittedName.stream().skip(1).collect(Collectors.joining(" "));
 			return Arrays.asList(
 				new CustomerCreatedV2Event(
-					customerCreatedEvent.rootAggregateId(),
+					deprecatedEvent.rootAggregateId(),
 					firstName,
 					surname,
-					customerCreatedEvent.getEmail(),
-					customerCreatedEvent.getPersonalIdNumber(),
-					customerCreatedEvent.created(),
-					customerCreatedEvent.originator())
+					deprecatedEvent.getEmail(),
+					deprecatedEvent.getPersonalIdNumber(),
+					deprecatedEvent.created(),
+					deprecatedEvent.originator())
 			);
 		};
 	}
@@ -49,28 +79,28 @@ public class CustomerDeprecatedEventsUpcaster extends DeprecatedEventsUpcaster {
 
 	private EventConverter<CustomerRenamedEvent> customerRenamedEventConverter() {
 
-		return customerRenamedEvent -> {
+		return deprecatedEvent -> {
 
 			List<Event> upcasted = new LinkedList<>();
 
-			List<String> splitted = splitNameBySpace(customerRenamedEvent.getNewName());
+			List<String> splitted = splitNameBySpace(deprecatedEvent.getNewName());
 			if (splitted.size() > 0) {
 				upcasted
 					.add(
 						new CustomerFirstNameChangedEvent(
-							customerRenamedEvent.rootAggregateId(),
+							deprecatedEvent.rootAggregateId(),
 							splitted.get(0),
-							customerRenamedEvent.created(),
-							customerRenamedEvent.originator())
+							deprecatedEvent.created(),
+							deprecatedEvent.originator())
 					);
 			}
 			if (splitted.size() > 1) {
 				upcasted.add(
 					new CustomerSurnameChangedEvent(
-						customerRenamedEvent.rootAggregateId(),
+						deprecatedEvent.rootAggregateId(),
 						splitted.stream().skip(1).collect(Collectors.joining(" ")),
-						customerRenamedEvent.created(),
-						customerRenamedEvent.originator())
+						deprecatedEvent.created(),
+						deprecatedEvent.originator())
 				);
 			}
 			return upcasted;
@@ -79,18 +109,18 @@ public class CustomerDeprecatedEventsUpcaster extends DeprecatedEventsUpcaster {
 
 	private EventConverter<CustomerGenderChangedEvent> customerGenderChangedEventConverter() {
 
-		return customerRenamedEvent -> Collections.emptyList();
+		return deprecatedEvent -> Collections.emptyList();
 	}
 
 	private EventConverter<CustomerEmailChangedEvent> customerChangedEmailEventConverter() {
 
-		return customerEmailChangedEvent -> Arrays.asList(
+		return deprecatedEvent -> Arrays.asList(
 			new CustomerEmailChangedV2Event(
-				customerEmailChangedEvent.rootAggregateId(),
+				deprecatedEvent.rootAggregateId(),
 				"unknown",
-				customerEmailChangedEvent.getEmail(),
-				customerEmailChangedEvent.created(),
-				customerEmailChangedEvent.originator()));
+				deprecatedEvent.getEmail(),
+				deprecatedEvent.created(),
+				deprecatedEvent.originator()));
 	}
 
 }

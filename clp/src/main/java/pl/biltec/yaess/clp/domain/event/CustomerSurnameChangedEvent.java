@@ -9,7 +9,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
-
+/** Kept only for backward compatibility */
+@Deprecated
 public class CustomerSurnameChangedEvent extends Event {
 
 	private String surname;

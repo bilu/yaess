@@ -10,20 +10,18 @@ import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-/** Kept only for backward compatibility */
-@Deprecated
-public class CustomerCreatedV2Event extends Event {
+public class CustomerCreatedV3Event extends Event {
 
 	private String firstName;
-	private String surname;
+	private String lastName;
 	private String email;
 	private String personalIdNumber;
 
-	public CustomerCreatedV2Event(RootAggregateId id, String firstName, String surname, String email, String personalIdNumber, LocalDateTime created, String originator) {
+	public CustomerCreatedV3Event(RootAggregateId id, String firstName, String lastName, String email, String personalIdNumber, LocalDateTime created, String originator) {
 
 		super(id, created, originator);
 		this.firstName = firstName;
-		this.surname = surname;
+		this.lastName = lastName;
 		this.email = email;
 		this.personalIdNumber = personalIdNumber;
 	}
@@ -33,9 +31,9 @@ public class CustomerCreatedV2Event extends Event {
 		return firstName;
 	}
 
-	public String getSurname() {
+	public String getLastName() {
 
-		return surname;
+		return lastName;
 	}
 
 	public String getEmail() {
@@ -54,15 +52,15 @@ public class CustomerCreatedV2Event extends Event {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof CustomerCreatedV2Event))
+		if (!(o instanceof CustomerCreatedV3Event))
 			return false;
 
-		CustomerCreatedV2Event that = (CustomerCreatedV2Event) o;
+		CustomerCreatedV3Event that = (CustomerCreatedV3Event) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
 			.append(firstName, that.firstName)
-			.append(surname, that.surname)
+			.append(lastName, that.lastName)
 			.append(email, that.email)
 			.append(personalIdNumber, that.personalIdNumber)
 			.isEquals();
@@ -74,7 +72,7 @@ public class CustomerCreatedV2Event extends Event {
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
 			.append(firstName)
-			.append(surname)
+			.append(lastName)
 			.append(email)
 			.append(personalIdNumber)
 			.toHashCode();
@@ -85,7 +83,7 @@ public class CustomerCreatedV2Event extends Event {
 
 		return new ToStringBuilder(this)
 			.append("firstName", firstName)
-			.append("surname", surname)
+			.append("lastName", lastName)
 			.append("email", email)
 			.append("personalIdNumber", personalIdNumber)
 			.append("rootAggregateId", rootAggregateId)

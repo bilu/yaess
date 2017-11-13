@@ -10,15 +10,15 @@ import pl.biltec.yaess.clp.ports.customer.Command;
 public class CreateCustomerCommand extends Command {
 
 	private String firstName;
-	private String surname;
+	private String lastName;
 	private String email;
 	private String personalIdNumber;
 
-	public CreateCustomerCommand(String customerId, String originator, String firstName, String surname, String email, String personalIdNumber) {
+	public CreateCustomerCommand(String customerId, String originator, String firstName, String lastName, String email, String personalIdNumber) {
 
 		super(originator, customerId);
 		this.firstName = firstName;
-		this.surname = surname;
+		this.lastName = lastName;
 		this.email = email;
 		this.personalIdNumber = personalIdNumber;
 	}
@@ -28,9 +28,9 @@ public class CreateCustomerCommand extends Command {
 		return firstName;
 	}
 
-	public String getSurname() {
+	public String getLastName() {
 
-		return surname;
+		return lastName;
 	}
 
 	public String getEmail() {
@@ -57,7 +57,7 @@ public class CreateCustomerCommand extends Command {
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
 			.append(firstName, that.firstName)
-			.append(surname, that.surname)
+			.append(lastName, that.lastName)
 			.append(email, that.email)
 			.append(personalIdNumber, that.personalIdNumber)
 			.isEquals();
@@ -69,7 +69,7 @@ public class CreateCustomerCommand extends Command {
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
 			.append(firstName)
-			.append(surname)
+			.append(lastName)
 			.append(email)
 			.append(personalIdNumber)
 			.toHashCode();
@@ -80,7 +80,7 @@ public class CreateCustomerCommand extends Command {
 
 		return new ToStringBuilder(this)
 			.append("firstName", firstName)
-			.append("surname", surname)
+			.append("lastName", lastName)
 			.append("email", email)
 			.append("personalIdNumber", personalIdNumber)
 			.append("originator", originator)

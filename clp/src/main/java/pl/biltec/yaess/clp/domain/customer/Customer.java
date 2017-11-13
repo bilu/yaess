@@ -8,11 +8,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import pl.biltec.yaess.clp.domain.customer.exception.CustomerNotExistsException;
-import pl.biltec.yaess.clp.domain.event.CustomerCreatedV2Event;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedV3Event;
 import pl.biltec.yaess.clp.domain.event.CustomerDeletedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerFirstNameChangedEvent;
-import pl.biltec.yaess.clp.domain.event.CustomerSurnameChangedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerLastNameChangedEvent;
 import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.domain.Event;
 import pl.biltec.yaess.core.domain.RootAggregate;
@@ -34,7 +34,7 @@ public class Customer extends RootAggregate {
 	private boolean created;
 	private boolean deleted;
 	private String firstName;
-	private String surname;
+	private String lastName;
 	private String email;
 	/** PESEL */
 	private String personalIdNumber;
@@ -47,14 +47,14 @@ public class Customer extends RootAggregate {
 	}
 
 	/* 2. Aggregate business methods */
-	public Customer(String customerId, String firstName, String surname, String email, String personalIdNumber, String originator) {
+	public Customer(String customerId, String firstName, String lastName, String email, String personalIdNumber, String originator) {
 
 		Contract.notNull(originator, "originator");
 		Contract.notNull(firstName, "firstName");
-		Contract.notNull(surname, "surname");
+		Contract.notNull(lastName, "lastName");
 		Contract.notNull(email, "email");
 		Contract.notNull(personalIdNumber, "personalIdNumber");
-		apply(new CustomerCreatedV2Event(new RootAggregateId(customerId), firstName, surname, email.toLowerCase(), personalIdNumber, LocalDateTime.now(), originator));
+		apply(new CustomerCreatedV3Event(new RootAggregateId(customerId), firstName, lastName, email.toLowerCase(), personalIdNumber, LocalDateTime.now(), originator));
 	}
 
 	public void changeFirstName(String newFirstName, String originator) {
@@ -66,12 +66,12 @@ public class Customer extends RootAggregate {
 		}
 	}
 
-	public void changeSurname(String newSurname, String originator) {
+	public void changeLastName(String newLastName, String originator) {
 
 		Contract.notNull(originator, "originator");
-		Contract.notNull(newSurname, "newSurname");
-		if (!this.surname.equals(newSurname)) {
-			apply(new CustomerFirstNameChangedEvent(id, newSurname, LocalDateTime.now(), originator));
+		Contract.notNull(newLastName, "newLastName");
+		if (!this.lastName.equals(newLastName)) {
+			apply(new CustomerFirstNameChangedEvent(id, newLastName, LocalDateTime.now(), originator));
 		}
 	}
 
@@ -100,7 +100,7 @@ public class Customer extends RootAggregate {
 	private void mutate(CustomerDeletedEvent event) {
 
 		firstName = firstName + "_REMOVED_" + event.created() + "_BY_" + event.originator();
-		surname = surname + "_REMOVED_" + event.created() + "_BY_" + event.originator();
+		lastName = lastName + "_REMOVED_" + event.created() + "_BY_" + event.originator();
 		deleted = true;
 	}
 
@@ -109,11 +109,11 @@ public class Customer extends RootAggregate {
 		this.email = event.getNewEmail();
 	}
 
-	private void mutate(CustomerCreatedV2Event event) {
+	private void mutate(CustomerCreatedV3Event event) {
 
 		this.created = true;
 		this.firstName = event.getFirstName();
-		this.surname = event.getSurname();
+		this.lastName = event.getLastName();
 		this.email = event.getEmail();
 		this.personalIdNumber = event.getPersonalIdNumber();
 		this.id = event.rootAggregateId();
@@ -126,9 +126,9 @@ public class Customer extends RootAggregate {
 		this.lastUpdateTimestamp = event.created();
 	}
 
-	private void mutate(CustomerSurnameChangedEvent event) {
+	private void mutate(CustomerLastNameChangedEvent event) {
 
-		this.surname = event.getSurname();
+		this.lastName = event.getLastName();
 		this.lastUpdateTimestamp = event.created();
 	}
 
@@ -148,7 +148,7 @@ public class Customer extends RootAggregate {
 			.append(created, customer.created)
 			.append(deleted, customer.deleted)
 			.append(firstName, customer.firstName)
-			.append(surname, customer.surname)
+			.append(lastName, customer.lastName)
 			.append(email, customer.email)
 			.append(personalIdNumber, customer.personalIdNumber)
 			.append(creationTimestamp, customer.creationTimestamp)
@@ -164,7 +164,7 @@ public class Customer extends RootAggregate {
 			.append(created)
 			.append(deleted)
 			.append(firstName)
-			.append(surname)
+			.append(lastName)
 			.append(email)
 			.append(personalIdNumber)
 			.append(creationTimestamp)
@@ -179,7 +179,7 @@ public class Customer extends RootAggregate {
 			.append("created", created)
 			.append("deleted", deleted)
 			.append("firstName", firstName)
-			.append("surname", surname)
+			.append("lastName", lastName)
 			.append("email", email)
 			.append("personalIdNumber", personalIdNumber)
 			.append("creationTimestamp", creationTimestamp)

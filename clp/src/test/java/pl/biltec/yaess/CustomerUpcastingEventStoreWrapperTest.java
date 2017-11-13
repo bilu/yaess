@@ -13,13 +13,14 @@ import org.mockito.Mockito;
 
 import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedEvent;
-import pl.biltec.yaess.clp.domain.event.CustomerCreatedV2Event;
+import pl.biltec.yaess.clp.domain.event.CustomerCreatedV3Event;
 import pl.biltec.yaess.clp.domain.event.CustomerDeprecatedEventsUpcaster;
 import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerFirstNameChangedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerGenderChangedEvent;
+import pl.biltec.yaess.clp.domain.event.CustomerLastNameChangedEvent;
 import pl.biltec.yaess.clp.domain.event.CustomerRenamedEvent;
-import pl.biltec.yaess.clp.domain.event.CustomerSurnameChangedEvent;
 import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.UpcastingEventStoreWrapper;
 import pl.biltec.yaess.core.domain.Event;
@@ -45,6 +46,8 @@ public class CustomerUpcastingEventStoreWrapperTest {
 		RootAggregateId customerId = new RootAggregateId(UUID.randomUUID().toString());
 		List<Event> events = Arrays.asList(
 			new CustomerCreatedEvent(customerId, "male", "Neo Doe", "email@email.pl", "123", LocalDateTime.now(), "admin"),
+			new CustomerGenderChangedEvent(customerId, "female", LocalDateTime.now(), "admin"),
+			new CustomerGenderChangedEvent(customerId, "male", LocalDateTime.now(), "admin"),
 			new CustomerEmailChangedEvent(customerId, "new@email.pl", LocalDateTime.now(), "admin2"),
 			new CustomerEmailChangedEvent(customerId, "new2@email.pl", LocalDateTime.now(), "admin2"),
 			new CustomerRenamedEvent(customerId, "Super Man", LocalDateTime.now(), "admin2")
@@ -58,11 +61,11 @@ public class CustomerUpcastingEventStoreWrapperTest {
 		Assertions.assertThat(upcastedEvents).hasSize(5);
 		List<Class<?>> classesAfterUpcast = upcastedEvents.stream().map(Object::getClass).collect(Collectors.toList());
 		Assertions.assertThat(classesAfterUpcast).containsExactly(
-			CustomerCreatedV2Event.class,
+			CustomerCreatedV3Event.class,
 			CustomerEmailChangedV2Event.class,
 			CustomerEmailChangedV2Event.class,
 			CustomerFirstNameChangedEvent.class,
-			CustomerSurnameChangedEvent.class
+			CustomerLastNameChangedEvent.class
 		);
 	}
 }

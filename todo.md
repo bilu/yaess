@@ -1,7 +1,6 @@
 # TODO
 
-* upcast event to no event (null, empty)
-* upcast event from one to many
+* upcast deprecated subdir
     
     
 * query part

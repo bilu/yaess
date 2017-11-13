@@ -1,27 +1,23 @@
-package pl.biltec.yaess.clp.ports.customer.command;
+package pl.biltec.yaess.clp.domain.event;
+
+import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import pl.biltec.yaess.clp.ports.customer.Command;
+import pl.biltec.yaess.core.domain.Event;
+import pl.biltec.yaess.core.domain.RootAggregateId;
 
 
-public class ChangeCustomerNameCommand extends Command {
+public class CustomerLastNameChangedEvent extends Event {
 
-	private String firstName;
 	private String lastName;
 
-	public ChangeCustomerNameCommand(String customerId, String originator, String firstName, String lastName) {
+	public CustomerLastNameChangedEvent(RootAggregateId id, String lastName, LocalDateTime timestamp, String originator) {
 
-		super(originator, customerId);
-		this.firstName = firstName;
+		super(id, timestamp, originator);
 		this.lastName = lastName;
-	}
-
-	public String getFirstName() {
-
-		return firstName;
 	}
 
 	public String getLastName() {
@@ -35,14 +31,13 @@ public class ChangeCustomerNameCommand extends Command {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof ChangeCustomerNameCommand))
+		if (!(o instanceof CustomerLastNameChangedEvent))
 			return false;
 
-		ChangeCustomerNameCommand that = (ChangeCustomerNameCommand) o;
+		CustomerLastNameChangedEvent that = (CustomerLastNameChangedEvent) o;
 
 		return new EqualsBuilder()
-			.appendSuper(super.equals(o))
-			.append(firstName, that.firstName)
+			.appendSuper(super.equals(that))
 			.append(lastName, that.lastName)
 			.isEquals();
 	}
@@ -52,7 +47,6 @@ public class ChangeCustomerNameCommand extends Command {
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(firstName)
 			.append(lastName)
 			.toHashCode();
 	}
@@ -61,10 +55,10 @@ public class ChangeCustomerNameCommand extends Command {
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("firstName", firstName)
 			.append("lastName", lastName)
-			.append("originator", originator)
 			.append("customerId", rootAggregateId)
+			.append("eventId", eventId)
+			.append("created", created)
 			.toString();
 	}
 }

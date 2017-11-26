@@ -17,6 +17,11 @@ public class CustomerEventHandler {
 
 	private CustomerCommandService customerCommandService;
 
+	public CustomerEventHandler(CustomerCommandService customerCommandService) {
+
+		this.customerCommandService = customerCommandService;
+	}
+
 	public void handle(CustomerHasDiedEvent event) {
 
 		customerCommandService.handle(new DeleteCustomerCommand(event.rootAggregateId().toString(), event.originator()));

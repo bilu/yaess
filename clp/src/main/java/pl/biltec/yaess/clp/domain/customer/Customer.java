@@ -36,7 +36,6 @@ public class Customer extends RootAggregate {
 	private String firstName;
 	private String lastName;
 	private String email;
-	/** PESEL */
 	private String personalIdNumber;
 	private LocalDateTime creationTimestamp;
 	private LocalDateTime lastUpdateTimestamp;
@@ -47,6 +46,7 @@ public class Customer extends RootAggregate {
 	}
 
 	/* 2. Aggregate business methods */
+	// TODO [bilu] 26.11.17 String customerId -> RootAggregateId customerId
 	public Customer(String customerId, String firstName, String lastName, String email, String personalIdNumber, String originator) {
 
 		Contract.notNull(originator, "originator");

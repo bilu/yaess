@@ -7,7 +7,7 @@ import pl.biltec.yaess.clp.domain.customer.Customer;
 import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedV2Event;
 import pl.biltec.yaess.clp.domain.event.CustomerDeprecatedEventsUpcaster;
-import pl.biltec.yaess.clp.ports.customer.AuthorizationService;
+import pl.biltec.yaess.clp.ports.AuthorizationService;
 import pl.biltec.yaess.clp.ports.customer.CustomerCommandService;
 import pl.biltec.yaess.clp.ports.customer.command.ChangeCustomerEmailCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import pl.biltec.yaess.clp.ports.customer.Command;
+import pl.biltec.yaess.clp.ports.Command;
 
 
 public class ChangeCustomerNameCommand extends Command {

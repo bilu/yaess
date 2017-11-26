@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.Fail;
 import org.junit.Before;
 
-import pl.biltec.yaess.clp.ports.customer.Command;
+import pl.biltec.yaess.clp.ports.Command;
 
 
 /**

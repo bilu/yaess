@@ -1,4 +1,4 @@
-package pl.biltec.yaess.clp.ports.customer.command;
+package pl.biltec.yaess.clp.ports.account.command;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,19 +7,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import pl.biltec.yaess.clp.ports.Command;
 
 
-public class ChangeCustomerEmailCommand extends Command {
+public class AddPointsToAccountCommand extends Command {
 
-	private String email;
+	private int points;
 
-	public ChangeCustomerEmailCommand(String customerId, String originator, String email) {
-
-		super(originator, customerId);
-		this.email = email;
+	public AddPointsToAccountCommand(String accountId, int points, String originator) {
+		super(originator, accountId);
+		this.points = points;
 	}
 
-	public String getEmail() {
+	public int getPoints() {
 
-		return email;
+		return points;
 	}
 
 	@Override
@@ -28,14 +27,14 @@ public class ChangeCustomerEmailCommand extends Command {
 		if (this == o)
 			return true;
 
-		if (!(o instanceof ChangeCustomerEmailCommand))
+		if (!(o instanceof AddPointsToAccountCommand))
 			return false;
 
-		ChangeCustomerEmailCommand that = (ChangeCustomerEmailCommand) o;
+		AddPointsToAccountCommand that = (AddPointsToAccountCommand) o;
 
 		return new EqualsBuilder()
 			.appendSuper(super.equals(o))
-			.append(email, that.email)
+			.append(points, that.points)
 			.isEquals();
 	}
 
@@ -44,7 +43,7 @@ public class ChangeCustomerEmailCommand extends Command {
 
 		return new HashCodeBuilder(17, 37)
 			.appendSuper(super.hashCode())
-			.append(email)
+			.append(points)
 			.toHashCode();
 	}
 
@@ -52,9 +51,9 @@ public class ChangeCustomerEmailCommand extends Command {
 	public String toString() {
 
 		return new ToStringBuilder(this)
-			.append("email", email)
+			.append("points", points)
 			.append("originator", originator)
-			.append("customerId", rootAggregateId)
+			.append("rootAggregateId", rootAggregateId)
 			.toString();
 	}
 }

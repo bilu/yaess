@@ -18,6 +18,7 @@ import pl.biltec.yaess.clp.domain.customer.CustomerRepository;
 import pl.biltec.yaess.clp.domain.event.CustomerCreatedV3Event;
 import pl.biltec.yaess.clp.domain.event.CustomerEmailChangedV2Event;
 import pl.biltec.yaess.clp.ports.customer.CustomerCommandService;
+import pl.biltec.yaess.clp.ports.customer.command.ChangeCustomerEmailCommand;
 import pl.biltec.yaess.clp.ports.customer.command.CreateCustomerCommand;
 import pl.biltec.yaess.core.adapters.store.EventStore;
 import pl.biltec.yaess.core.adapters.store.SingleEventSubscriber;
@@ -75,25 +76,23 @@ class TestController {
 	}
 
 	@GetMapping("/test")
-	Map<String, Object> test(@RequestParam(required = false, defaultValue = "") String id) {
+	Map<String, Object> test(
+		@RequestParam(required = false, defaultValue = "") String id) {
 
 		result.put("timestamp", LocalDateTime.now());
 
+		int randomInt = RandomUtils.nextInt(0, 100);
 		if (StringUtils.hasText(id)) {
-			try {
-				result.put("Customer for id =" + id, customerRepository.get(new RootAggregateId(id)).toString());
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+			customerCommandService.handle(new ChangeCustomerEmailCommand(id, "admin2", "zmieniony-Pablo" + randomInt));
+			result.put(id, customerRepository.get(new RootAggregateId(id)).toString());
 		}
-
-		int randomInt = RandomUtils.nextInt(0, 10);
-		String customerId = UUID.randomUUID().toString();
-		customerCommandService.handle(new CreateCustomerCommand(customerId, "admin", "Pablo" + randomInt, "Picasso" + randomInt, "pablo" + randomInt + "@picasso.pl", "12121234563"));
-
-
-		result.put(customerId, customerRepository.get(new RootAggregateId(customerId)).toString().toString());
+		else {
+			int randomInt2 = RandomUtils.nextInt(0, 10);
+			String customerId = UUID.randomUUID().toString();
+			customerCommandService
+				.handle(new CreateCustomerCommand(customerId, "admin", "Pablo" + randomInt2, "Picasso" + randomInt2, "pablo" + randomInt2 + "@picasso.pl", "12121234563"));
+			result.put(customerId, customerRepository.get(new RootAggregateId(customerId)).toString());
+		}
 
 		return result;
 	}

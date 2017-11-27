@@ -28,7 +28,7 @@ public @interface MustExist {
 
 		TESTING_PURPOSE,
 		/**
-		 * ex. JSON(de)serialization, convertion tools
+		 * ex. JSON(de)serialization, convertion tools, ORM
 		 */
 		MAPPING,
 		/**

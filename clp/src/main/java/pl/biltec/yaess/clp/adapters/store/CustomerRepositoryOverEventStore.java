@@ -17,6 +17,7 @@ public class CustomerRepositoryOverEventStore extends RepositoryOverEventStore<C
 		EventStore eventStore,
 		Class<Customer> customerClass) {
 
+		// TODO [bilu] 27.11.17 take class from generic instead of explicit parameter
 		super(eventStore, customerClass);
 	}
 

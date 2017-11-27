@@ -3,6 +3,7 @@ package pl.biltec.yaess.core.adapters.store.jpa;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,14 +17,16 @@ public class EventRecord implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	private String rootAggregateName;
 	private String rootId;
 
 	private String eventClassName;
+	@Column(columnDefinition = "text")
 	private String eventAsJson;
 	private LocalDateTime eventCreated;
 
+	// TODO [bilu] 27.11.17 verify if it is still necessary
 	@MustExist(reason = MustExist.Reason.MAPPING)
 	public EventRecord() {
 
@@ -38,7 +41,7 @@ public class EventRecord implements Serializable {
 		this.eventCreated = eventCreated;
 	}
 
-	public long getId() {
+	public Long getId() {
 
 		return id;
 	}

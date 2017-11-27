@@ -4,6 +4,7 @@ import pl.biltec.yaess.core.common.Contract;
 import pl.biltec.yaess.core.common.exception.ConditionNotMetException;
 
 
+
 public interface AuthorizationService {
 
 	boolean isAllowedToInvokeCommand(Command command);

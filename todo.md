@@ -1,9 +1,16 @@
 # TODO
 
+* query part
+** report - not unique emails (due to async)
+** report - cross bounded context
+** report - nontrivial calculation ( modficiation counts in hour per ID, the most active originator)
+
+
+* uniqnes & refactor in JPA (Spring Data) implementation
+
 * upcast deprecated subdir
     
     
-* query part
 
 * pagination / scrollable during events fetch (larg number of events / out of mem)
 * UniqueValuesStore - need to handle removal and rename in public API
